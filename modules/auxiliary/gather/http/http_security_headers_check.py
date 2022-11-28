@@ -44,9 +44,9 @@ __security_headers = {
     'Permissions-Policy': 'Permissions Policy is a new header that allows a site to control which features and APIs can be used in the browser.'
 }
 
-__headers = []
-__values = []
-__status = []
+_headers = []
+_values = []
+_status = []
 
 def get_security_http_headers(url, proxy, headers, cookie):
     try:
@@ -61,9 +61,9 @@ def get_security_http_headers(url, proxy, headers, cookie):
             for server_header_key, value in __response.headers.items():
                 if security_header_key.lower() == server_header_key.lower():
                     __headers_exists[server_header_key] = value
-                    __headers.append(color.color("green", server_header_key))
-                    __values.append(color.color("lgray", value))
-                    __status.append(color.color("green", "Present"))
+                    _headers.append(color.color("green", server_header_key))
+                    _values.append(color.color("lgray", value))
+                    _status.append(color.color("green", "Present"))
 
 
         for security_header_key, description in __security_headers.items():
@@ -71,12 +71,12 @@ def get_security_http_headers(url, proxy, headers, cookie):
                 if security_header_key.lower() == server_header_key.lower():
                     __headers_missing_complete[server_header_key] = description
 
-                    __headers.append(color.color("red", server_header_key))
-                    __values.append(color.color("yellow", description))
-                    __status.append(color.color("red", "Missing"))
+                    _headers.append(color.color("red", server_header_key))
+                    _values.append(color.color("yellow", description))
+                    _status.append(color.color("red", "Missing"))
 
         print(tools.create_tabulate_list(['Header', 'value', 'Status'],
-                                         [__headers, __values, __status])['message'])
+                                         [_headers, _values, _status])['message'])
 
     except Exception as Error:
         pass
@@ -102,8 +102,6 @@ def exploit():
         pass
 
     try:
-        del __headers[:]
-        del __values[:]
-        del __status[:]
+        tools.clean_list([_headers, _values, _status])
     except:
         pass

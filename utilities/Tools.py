@@ -266,4 +266,8 @@ class Tools(object):
 
         return self.__status
 
+    def clean_list(self, list):
+        for list in list:
+            list.clear()
+
 tools = Tools()

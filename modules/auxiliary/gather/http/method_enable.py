@@ -79,8 +79,6 @@ def get_method_request(method, url, proxy, headers, cookie):
                 __response_status_code.append(color.color("red", str(__response.status_code)))
                 __response_reason.append(color.color("red", tools.status_code[__response.status_code]))
     except Exception as Error:
-        pass
-        #print_message.execution_error(Error)
         return False
 
 def exploit():
@@ -88,6 +86,11 @@ def exploit():
     __target = obtainer.options['target'][2]
 
     try:
+        __response = tools.http_or_https(__target)
+        if __response['code'] == 500:
+            print_message.execution_error("URL must start with http or https")
+            return False
+
         print_message.start_execution()
         __response = tools.http_or_https(__proxy)
         if __response['code'] == 200 or __proxy == "":
@@ -110,3 +113,5 @@ def exploit():
 
     except Exception as Error:
         pass
+
+    tools.clean_list([__response_methods, __response_length, __response_status_code, __response_reason])
