@@ -14,6 +14,7 @@ from datetime import datetime
 from tabulate import tabulate
 from platform import system
 from subprocess import STDOUT, check_output
+from tempfile import gettempdir
 
 class Tools(object):
     def __init__(self):
@@ -274,7 +275,7 @@ class Tools(object):
         for list in list:
             list.clear()
 
-    def get_platform(self, __port):
+    def get_port_use(self, __port):
         self.__status = {'message': '', 'code': 0}
         self.__platform = system().lower()
         if 'linux' in self.__platform:
@@ -290,6 +291,19 @@ class Tools(object):
             except Exception as Error:
                 print(Error)
                 self.__status['code'] = 200
+
+        return self.__status
+
+    def temp_dir(self):
+        self.__status = {'message': '', 'code': 0}
+        try:
+            self.__temp_dir = gettempdir()
+
+            self.__status['code'] = 200
+            self.__status['message'] = self.__temp_dir
+        except Exception as Error:
+            self.__status['code'] = 500
+            self.__status['message'] = Error
 
         return self.__status
 

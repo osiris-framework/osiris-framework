@@ -37,7 +37,7 @@ class Processor():
 
             elif 'generic/shell/reverse_tcp' in self.__payload_select:
                 self.__data_connection = str(self.__payload_options["lhost"][2] + str(":") + self.__payload_options["lport"][2])
-                if tools.get_platform(self.__payload_options['lport'][2])['code'] != 200:
+                if tools.get_port_use(self.__payload_options['lport'][2])['code'] != 200:
                     try:
                         self.__connection  = Thot(tuple(self.__data_connection.split(":")), self.__payload_select)
                         self.__thread = threading.Thread(target=self.__connection.create_worker, daemon=True)
