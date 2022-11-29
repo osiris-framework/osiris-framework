@@ -3,7 +3,8 @@
 # Author: Samir Sanchez Garnica @sasaga92
 # Version 1.0
 # Date: 15/11/2022
-
+import os
+import platform
 from re import search
 import socket
 from utilities.Colors import color
@@ -11,6 +12,9 @@ from OpenSSL import SSL, crypto
 from ssl import PROTOCOL_TLSv1
 from datetime import datetime
 from tabulate import tabulate
+from platform import system
+from subprocess import STDOUT, check_output
+
 class Tools(object):
     def __init__(self):
         self.__status = {'message': '', 'code': 0}
@@ -269,5 +273,25 @@ class Tools(object):
     def clean_list(self, list):
         for list in list:
             list.clear()
+
+    def get_platform(self, __port):
+        self.__status = {'message': '', 'code': 0}
+        self.__platform = system().lower()
+        if 'linux' in self.__platform:
+            try:
+                if ':{}'.format(__port) in check_output("netstat -ant", stderr=STDOUT, timeout=10, shell=True).decode():
+                    self.__status['code'] = 500
+            except Exception:
+                self.__status['code'] = 200
+        elif 'darwin' in self.__platform:
+            try:
+                if '*.{}'.format(__port) in check_output("netstat -antp tcp", stderr=STDOUT, timeout=10, shell=True).decode():
+                    self.__status['code'] = 500
+            except Exception as Error:
+                print(Error)
+                self.__status['code'] = 200
+
+        return self.__status
+
 
 tools = Tools()

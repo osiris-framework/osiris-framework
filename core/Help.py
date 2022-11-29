@@ -29,6 +29,12 @@ class Help(object):
         print(tabulate(self.__core_commands_osiris, headers='firstrow', tablefmt='grid', stralign='center'))
 
     def show_payloads_osiris(self):
-        pass
+        self.__show_payloads = [[color.color('yellow','payloads'),color.color('yellow','description')],
+                                [color.color('green', 'payload/generic/shell/bind_tcp'),'generate payloads generic shell to bind_tcp'],
+                                [color.color('green', 'payload/generic/shell/rce/reverse_tcp'),'generate payloads generic shell to reverse_tcp'],
+                                ]
+        print("\n")
+        print(color.color("yellow", '\t\t\t\t\tShow Payloads'))
+        print(tabulate(self.__show_payloads, headers='firstrow', tablefmt='grid', stralign='center'))
 
 help = Help()

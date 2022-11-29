@@ -15,6 +15,8 @@ from core.ModuleObtainer import obtainer
 from core.Help import help
 from core.Interpreter import interpreter
 from utilities.Files import update_modules
+from core.Processor import processor
+
 class Validator(object):
     """
         Description: Class that manages the invocation of osiris commands.
@@ -37,6 +39,7 @@ class Validator(object):
             elif self.__command[0].lower() == 'banner':
                 banner.banner_welcome()
             elif self.__command[0].lower() == 'exit' or self.__command[0].lower() == 'close' or self.__command[0].lower() == 'quit':
+                processor.kill_connections()
                 exit(0)
             elif self.__command[0].lower() == 'use':
                 from core.ModuleObtainer import obtainer
@@ -67,10 +70,9 @@ class Validator(object):
             elif self.__command[0].lower() == 'help':
                 help.help_osiris()
             elif self.__command[0].lower() == 'sessions':
-                pass
-                #__list_sessions__()
-            #elif 'select' in self.command[0].lower():
-            #    __get_console__(self.command[0].lower() + str(" ") + str(self.command[1]), "base")
+                processor.list_sessions()
+            elif 'select' in self.__command[0].lower():
+                processor.get_console(self.__command[0].lower() + str(" ") + str(self.__command[1]), "base")
             elif self.__command[0].lower() == 'reload_modules':
                 update_modules.processor_update_module('core/Completer.py')
             else:
@@ -112,8 +114,8 @@ class Validator(object):
 
                 try:
                     self.__payload = obtainer.options['payload'][2]
-                    obtainer.payload_info(self, self.__payload)
-                except:
+                    obtainer.payload_info(self.__payload)
+                except Exception as Error:
                     pass
             elif self.__command[0].lower() == "show":
                 if 'payloads' in self.__command[1].lower():
@@ -189,11 +191,9 @@ class Validator(object):
             elif self.__command[0].lower() == 'upgrade':
                 interpreter.check_upgrade()
             elif self.__command[0].lower() == 'sessions':
-                pass
-               # __list_sessions__()
+                processor.list_sessions()
             elif 'select' in self.__command[0].lower():
-                pass
-                #__get_console__(self.command[0].lower() + str(" ") + str(self.command[1]), "module")
+                processor.get_console(self.__command[0].lower() + str(" ") + str(self.__command[1]), "module")
             else:
                 print(color.color("red", "[!]") + color.color("lgray", " Option not found :("))
         except (KeyboardInterrupt, EOFError):

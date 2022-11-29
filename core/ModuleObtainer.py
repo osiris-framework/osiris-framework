@@ -87,13 +87,11 @@ class ModuleObtainer(object):
 
     def payload_info(self, payload):
         self.__payload = str(payload)
-        self.__path_payload = 'module/payloads/' + self.__payload
+        self.__path_payload = 'modules/payloads/' + self.__payload
 
         try:
             self.options_payload = getattr(__import__(self.__path_payload.replace("/", "."), fromlist=['options_payload']), 'options_payload')
-            print(color.color("lgray", "Payload options (") + color.color("purple",
-                                                                              self.__payload) + color.color(
-                "lgray", ")"))
+            print(color.color("lgray", "Payload options (") + color.color("purple",self.__payload) + color.color("lgray", ")"))
             print('')
 
             self.__option_message_payload = [[color.color('yellow','Name'),color.color('yellow','Require'),color.color('yellow','Description'),color.color('yellow','Value')]]
@@ -105,6 +103,7 @@ class ModuleObtainer(object):
             print('\n')
 
         except Exception as Error:
+            print(Error)
             return False
 
 obtainer = ModuleObtainer()

@@ -29,7 +29,7 @@ def module_completer():
 
             self.listCompleter = listCompleter
     t = tabCompleter()
-    t.createListCompleter(["set", "exploit", "back", "check", "help", "info", 'banner', 'run', 'exec', 'clean','search', 'options', 'set rhost', 'set rport', 'set target', 'set proxy', 'set password_file', 'set username_file', 'set username', 'set password'])
+    t.createListCompleter(["set", "exploit", "back", "check", "help", "info", 'banner', 'run', 'exec', 'clean','search', 'options', 'set rhost', 'set rport', 'set target', 'set proxy', 'set password_file', 'set username_file', 'set username', 'set password', 'sessions', 'set lhost', 'set lport', 'set payload generic/shell/bind_tcp', 'set payload generic/shell/reverse_tcp'])
     readline.set_completer_delims('\t')
     readline.parse_and_bind("tab: complete")
     readline.set_completer(t.listCompleter)
