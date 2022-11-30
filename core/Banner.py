@@ -11,11 +11,14 @@ from importlib import reload
 from utilities.Files import files
 
 
-class Banner():
+class Banner:
     def __init__(self):
         """
             Description: This class is in charge of managing the random banners at the start of the framework plus the count of the files in each of the folders to show the summary of auxiliary files, exploits, etc.
         """
+        self.__banner = None
+        self.__result = None
+        self.__unfiltered_result = None
         self.__colors = ['gray', 'blue', 'green', 'yellow', 'cyan', 'cafe', 'black', 'lpurple', 'purple', 'green_ptrl']
         self.__author = '''
                                                     osiris-framework
@@ -208,6 +211,7 @@ class Banner():
            ::::::::::::::::::.:::::::::::::::::::::::::::::::::::::::::::::::
                                                       hacking the system ...
         """
+
         import utilities.Files
         from utilities.Files import files
         reload(utilities.Files)

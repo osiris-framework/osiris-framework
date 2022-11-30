@@ -6,30 +6,41 @@
 
 from utilities.Colors import color
 from core.ModuleObtainer import obtainer
-import  readline
+import readline
 from glob import glob
 from core.Validator import Validator
 from tabulate import tabulate
 
+
 def module_completer():
     # source: https://gist.github.com/iamatypeofwalrus/5637895
+    def pathCompleter(text, state):
+        line = readline.get_line_buffer().split()
+        return [x for x in glob(text + '*')][state]
+
     class tabCompleter(object):
 
-        def pathCompleter(self,text,state):
-            line   = readline.get_line_buffer().split()
-            return [x for x in glob(text+'*')][state]
-        def createListCompleter(self,ll):
+        def __init__(self):
+            self.listCompleter = None
+
+        def createListCompleter(self, ll):
             pass
-            def listCompleter(text,state):
-                line   = readline.get_line_buffer()
+
+            def listCompleter(text, state):
+                line = readline.get_line_buffer()
                 if not line:
                     return [c + " " for c in ll][state]
                 else:
                     return [c + " " for c in ll if c.startswith(line)][state]
 
             self.listCompleter = listCompleter
+
     t = tabCompleter()
-    t.createListCompleter(["set", "exploit", "back", "check", "help", "info", 'banner', 'run', 'exec', 'clean','search', 'options', 'set rhost', 'set rport', 'set target', 'set proxy', 'set password_file', 'set username_file', 'set username', 'set password', 'sessions', 'set lhost', 'set lport', 'set payload generic/shell/bind_tcp', 'set payload generic/shell/reverse_tcp'])
+    t.createListCompleter(
+        ["set", "exploit", "back", "check", "help", "info", 'banner', 'run', 'exec', 'clean', 'search', 'options',
+         'set rhost', 'set rport', 'set target', 'set proxy', 'set password_file', 'set username_file', 'set username',
+         'set password', 'sessions', 'set lhost', 'set lport', 'set payload generic/shell/bind_tcp',
+         'set payload generic/shell/reverse_tcp'])
     readline.set_completer_delims('\t')
     readline.parse_and_bind("tab: complete")
     readline.set_completer(t.listCompleter)
@@ -38,7 +49,15 @@ class ModuleInterpreter(object):
     """
         Description: Class in charge of handling the interpretation of the module loading when using the use command
     """
+
     def __init__(self, module, category, module_input):
+        self.option_value = None
+        self.option_name = None
+        self.__id = None
+        self.__targets_message = None
+        self.__options_message = None
+        self.__option_value = None
+        self.__option_name = None
         self.__module_input = module_input
         from core.ModuleObtainer import obtainer
         obtainer.obtaining_info(self.__module_input)
@@ -59,10 +78,12 @@ class ModuleInterpreter(object):
         while True:
             try:
                 self.__user = "osiris"
-                self.__shell_ask = input(color.color("underline",color.color("lgray", "%s" % (self.__user))) + " " + self.__category + "(" + color.color('green_ptrl',self.__module_name) + ") > ").split()
+                self.__shell_ask = input(color.color("underline", color.color("lgray", "%s" % (
+                    self.__user))) + " " + self.__category + "(" + color.color('green_ptrl',
+                                                                               self.__module_name) + ") > ").split()
                 Validator(self.__shell_ask).validate_module_interpreter_mode()
-            except (KeyboardInterrupt,EOFError):
-                print(color.color("red","[!]") + color.color("lgray", " Type exit to close the program"))
+            except (KeyboardInterrupt, EOFError):
+                print(color.color("red", "[!]") + color.color("lgray", " Type exit to close the program"))
 
     def command_set_call(self, option_name, option_value):
         self.__option_name = option_name
@@ -73,7 +94,7 @@ class ModuleInterpreter(object):
     def options_message(self):
         print('')
         self.__options_message = [[color.color('yellow', 'Options'), color.color('yellow', 'Require'),
-                             color.color('yellow', 'Description'), color.color('yellow', 'Value')]]
+                                   color.color('yellow', 'Description'), color.color('yellow', 'Value')]]
 
         for opt, val in obtainer.options.items():
             self.__options_message.append([opt, val[0], val[1], val[2]])
@@ -82,10 +103,10 @@ class ModuleInterpreter(object):
 
     def help_message(self):
         print('')
-        print(color.color('green','Options:              Require:              Description:              Value:'))
-        print(color.color('lgray','--------              --------              ------------              ------'))
-        for opt,val in obtainer.options.items():
-            print("{:23s}".format(opt)+''+'            '.join(val))
+        print(color.color('green', 'Options:              Require:              Description:              Value:'))
+        print(color.color('lgray', '--------              --------              ------------              ------'))
+        for opt, val in obtainer.options.items():
+            print("{:23s}".format(opt) + '' + '            '.join(val))
         print('')
 
     def command_info_call(self):
@@ -122,11 +143,14 @@ class ModuleInterpreter(object):
             self.options_message(ModuleInterpreter)
             print('\n')
             print(color.color('green', 'Description:') + obtainer.info['description'] + '\n')
-            print(color.color('green', 'Referencess:'))
+            print(color.color('green', 'References:'))
             for ref in obtainer.info['references']:
                 print(color.color('red', ' - ') + ref)
         except KeyError:
-            print(color.color("red","[!]") + color.color("lgray", "You must define author, date, rank, category, path, license, description, reference keys in your information dictionary"))
+            print(color.color("red", "[!]") + color.color("lgray",
+                                                          "You must define author, date, rank, category, path, "
+                                                          "license, description, reference keys in your information "
+                                                          "dictionary")) 
 
         if obtainer.extra_info_obtainer(__file__):
             try:
@@ -155,9 +179,8 @@ class ModuleInterpreter(object):
             obtainer.options[str(self.option_name)][2] = self.option_value
         else:
             try:
-                if self.option_value == "\"\"" or self.option_value == "\'\'" :
+                if self.option_value == "\"\"" or self.option_value == "\'\'":
                     self.option_value = ""
                 obtainer.options_payload[str(self.option_name)][2] = self.option_value
             except Exception as e:
-                print(color.color("red","[!]") + color.color("lgray", " Option not defined in the module or payload"))
-
+                print(color.color("red", "[!]") + color.color("lgray", " Option not defined in the module or payload"))

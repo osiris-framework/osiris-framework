@@ -6,18 +6,19 @@
 
 import sys
 import threading
+import socket
 from queue import Queue
 from time import sleep
 from datetime import datetime
-from utilities.Messages import print_message
-print_message.name_module = __file__
 from utilities.Colors import color
 from core.thot.ThotCompleter import thot_completer
 from core.thot.Help import help
 from utilities.ScreenCleaner import ScreenCleaner
 from tabulate import tabulate
 from os import system
-import socket
+from utilities.Messages import print_message
+
+print_message.name_module = __file__
 
 _exit_flag = False
 _all_connections = []
@@ -26,8 +27,30 @@ _all_info = []
 _num_connections = 1
 _type_connection = []
 
-class Thot():
+
+class Thot:
     def __init__(self, __user_connection, __type_connection):
+        self.__user = None
+        self.__sock = None
+        self.__cont_connect_bind_tcp = None
+        self.__theConnection = None
+        self.__result = None
+        self.__command = None
+        self.__thread = None
+        self.__target_selected = None
+        self.__conn = None
+        self.__target = None
+        self.__buffer = None
+        self.__buffer_size = None
+        self.__socket_fd = None
+        self.__x = None
+        self.__connection = None
+        self.__user_address = None
+        self.__user_connection = None
+        self.__time_of_connection = None
+        self.__now = None
+        self.__socket = None
+        self.__host = None
         self.__address, self.__port = __user_connection
         self.__number_threads = 2
         self.__jobs_number = [1, 2]
@@ -46,7 +69,7 @@ class Thot():
 
     def accept_connections(self):
         self.__now = datetime.now()
-        self.__time_of_connection = " Time Local: ",self.__now.strftime('%H:%M:%S %Y/%m/%d')
+        self.__time_of_connection = " Time Local: ", self.__now.strftime('%H:%M:%S %Y/%m/%d')
         global _all_connections
         global _all_address
         global _all_info
@@ -59,11 +82,29 @@ class Thot():
                 _all_connections.append(self.__user_connection)
                 _all_address.append(self.__user_address)
                 _all_info.append(
-                    color.color("lgray", "(") + color.color("yellow", self.__address) + color.color("red",":") + color.color("yellow", str(self.__port)) + color.color("red", str(" -> ")) + color.color("yellow", str(self.__user_address[0])) + color.color("red", str(":")) + color.color("yellow", str(self.__user_address[1])) + str(" ") + color.color("lgray", str(self.__time_of_connection[0])) + color.color("red",str(self.__time_of_connection[1])) + color.color("lgray", str(")"))
+                    color.color("lgray", "(") + color.color("yellow", self.__address) + color.color("red",
+                                                                                                    ":") + color.color(
+                        "yellow", str(self.__port)) + color.color("red", str(" -> ")) + color.color("yellow", str(
+                        self.__user_address[0])) + color.color("red", str(":")) + color.color("yellow", str(
+                        self.__user_address[1])) + str(" ") + color.color("lgray", str(
+                        self.__time_of_connection[0])) + color.color("red",
+                                                                     str(self.__time_of_connection[1])) + color.color(
+                        "lgray", str(")"))
                 )
-                print(color.color("green", "[ info ] ") + color.color("lgray", "THOT interactive session ") +color.color("yellow",str(_num_connections))+color.color("lgray"," opened (") + color.color("yellow",self.__address)+color.color("red",":") + color.color("yellow",str(self.__port)) + color.color("red",str(" -> "))+ color.color("yellow",str(self.__user_address[0]))+color.color("red",str(":")) + color.color("yellow",str(self.__user_address[1]))+str(" ") + color.color("lgray",str(self.__time_of_connection[0])) + color.color("red",str(self.__time_of_connection[1]))+color.color("lgray",str(")")))
+                print(
+                    color.color("green", "[ info ] ") + color.color("lgray", "THOT interactive session ") + color.color(
+                        "yellow", str(_num_connections)) + color.color("lgray", " opened (") + color.color("yellow",
+                                                                                                           self.__address) + color.color(
+                        "red", ":") + color.color("yellow", str(self.__port)) + color.color("red",
+                                                                                            str(" -> ")) + color.color(
+                        "yellow", str(self.__user_address[0])) + color.color("red", str(":")) + color.color("yellow",
+                                                                                                            str(
+                                                                                                                self.__user_address[
+                                                                                                                    1])) + str(
+                        " ") + color.color("lgray", str(self.__time_of_connection[0])) + color.color("red", str(
+                        self.__time_of_connection[1])) + color.color("lgray", str(")")))
 
-                _num_connections+= 1
+                _num_connections += 1
             except Exception as Error:
                 print(Error)
                 print_message.execution_error("There was an error accepting connections")
@@ -83,17 +124,28 @@ class Thot():
             _all_connections.append(self.__connection)
             _all_address.append(self.__address)
             _all_info.append(
-                color.color("lgray", "(") + color.color("yellow", self.__address[0]) + color.color("red",":") + color.color("yellow", str(self.__port)) + color.color("lgray", str(self.__time_of_connection[0])) + color.color("red", str(self.__time_of_connection[1])) + color.color("lgray", str(")"))
+                color.color("lgray", "(") + color.color("yellow", self.__address[0]) + color.color("red",
+                                                                                                   ":") + color.color(
+                    "yellow", str(self.__port)) + color.color("lgray", str(self.__time_of_connection[0])) + color.color(
+                    "red", str(self.__time_of_connection[1])) + color.color("lgray", str(")"))
             )
 
-            print(color.color("green", "[ info ] ") + color.color("lgray", "THOT interactive session ") +color.color("yellow",str(_num_connections))+color.color("lgray"," opened (") + color.color("yellow",self.__address[0])+color.color("red",":") + color.color("yellow",str(self.__port)) + color.color("red",str(" -> "))+ color.color("yellow",str(self.__address[0]))+color.color("red",str(":")) + color.color("yellow",str(self.__address[1]))+str(" ") + color.color("lgray",str(self.__time_of_connection[0])) + color.color("red",str(self.__time_of_connection[1]))+color.color("lgray",str(")")))
-            _num_connections+= 1
+            print(color.color("green", "[ info ] ") + color.color("lgray", "THOT interactive session ") + color.color(
+                "yellow", str(_num_connections)) + color.color("lgray", " opened (") + color.color("yellow",
+                                                                                                   self.__address[
+                                                                                                       0]) + color.color(
+                "red", ":") + color.color("yellow", str(self.__port)) + color.color("red", str(" -> ")) + color.color(
+                "yellow", str(self.__address[0])) + color.color("red", str(":")) + color.color("yellow", str(
+                self.__address[1])) + str(" ") + color.color("lgray", str(self.__time_of_connection[0])) + color.color(
+                "red", str(self.__time_of_connection[1])) + color.color("lgray", str(")")))
+            _num_connections += 1
         except Exception as Error:
             print_message.execution_error("There was an error connecting to the remote host {}".format(Error))
 
     def socket_bind(self):
         try:
-            print(color.color("green", "[ info ] ") + color.color("cyan", "Thot is listening on %s:%d..." % (self.__host, self.__port)))
+            print(color.color("green", "[ info ] ") + color.color("cyan", "Thot is listening on %s:%d..." % (
+                self.__host, self.__port)))
             self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.__socket.bind((self.__host, self.__port))
             self.__socket.listen(5)
@@ -111,10 +163,10 @@ class Thot():
         global _all_connections
         print_message.execution_info("killing connections, please wait ... ")
 
-        for __conection in _all_connections:
+        for __connection in _all_connections:
             try:
-                __conection.shutdown(2)
-                __conection.close()
+                __connection.shutdown(2)
+                __connection.close()
             except Exception as Error:
                 print_message.execution_error("Could not close connection {}".format(Error))
 
@@ -203,8 +255,13 @@ class Thot():
         except:
             return
 
-        self.__target_selected = color.color("yellow", "[!] ") + color.color("red","The connection to the target has been lost: ") + color.color("yellow", _all_address[self.__target][0])
-        print(color.color("green", "[ info ] ") + color.color("cyan", "Select Target:") + color.color("yellow",_all_address[self.__target][0]))
+        self.__target_selected = color.color("yellow", "[!] ") + color.color("red",
+                                                                             "The connection to the target has been lost: ") + color.color(
+            "yellow", _all_address[self.__target][0])
+        print(color.color("green", "[ info ] ") + color.color("cyan", "Select Target:") + color.color("yellow",
+                                                                                                      _all_address[
+                                                                                                          self.__target][
+                                                                                                          0]))
 
         self.__thread = threading.Thread(target=self.transfer, args=(self.__conn,))
         self.__thread.start()
@@ -249,19 +306,25 @@ class Thot():
         global _all_info
 
         try:
-            self.__result = [[color.color('yellow', 'ID'), color.color('yellow', 'TYPE'), color.color('yellow', 'HOST'),color.color('yellow', 'PORT'), color.color('yellow', 'DESCRIPTION CONNECTION')]]
+            self.__result = [[color.color('yellow', 'ID'), color.color('yellow', 'TYPE'), color.color('yellow', 'HOST'),
+                              color.color('yellow', 'PORT'), color.color('yellow', 'DESCRIPTION CONNECTION')]]
 
             for __i, __conn in enumerate(_all_connections):
                 try:
-                    self.__theconnection = _type_connection[__i]
+                    self.__theConnection = _type_connection[__i]
                 except:
                     _type_connection.append("unknown")
-                self.__result.append([color.color("green_ptrl",str(__i)),color.color("lgray",str(_type_connection[__i])),color.color("green",str(_all_address[__i][0])),color.color("green",str(_all_address[__i][1])),str(_all_info[__i])])
+                self.__result.append(
+                    [color.color("green_ptrl", str(__i)), color.color("lgray", str(_type_connection[__i])),
+                     color.color("green", str(_all_address[__i][0])), color.color("green", str(_all_address[__i][1])),
+                     str(_all_info[__i])])
 
                 if len(self.__result) == 1:
-                    self.__result.append([color.color('red', 'NOT CONNECTIONS'), color.color('red', 'CONNECTIONS'),color.color('red', 'CONNECTIONS')])
+                    self.__result.append([color.color('red', 'NOT CONNECTIONS'), color.color('red', 'CONNECTIONS'),
+                                          color.color('red', 'CONNECTIONS')])
         except:
-            self.__result.append([color.color('red','NOT CONNECTIONS'),color.color('red','CONNECTIONS'),color.color('red','CONNECTIONS')])
+            self.__result.append([color.color('red', 'NOT CONNECTIONS'), color.color('red', 'CONNECTIONS'),
+                                  color.color('red', 'CONNECTIONS')])
 
         print('\n')
         print(tabulate(self.__result, headers='firstrow', tablefmt='simple', stralign='center'))
@@ -280,13 +343,15 @@ class Thot():
                 self.accept_connections_bind(self.__sock, [self.__address, self.__port])
                 return True
             except socket.error as Error:
-                print_message.execution_info("Trying {} to connect with {}:{}".format(self.__cont_connect_bind_tcp, self.__address, self.__port))
+                print_message.execution_info(
+                    "Trying {} to connect with {}:{}".format(self.__cont_connect_bind_tcp, self.__address, self.__port))
             sleep(1)
             self.__cont_connect_bind_tcp += 1
 
         return True
 
     def console(self, __session, __path):
+        global _exit_flag
         thot_completer()
         _exit_flag = False
 
@@ -296,7 +361,9 @@ class Thot():
         self.__user = "interpreter"
 
         while True:
-            self.__command = input(color.color("underline",color.color("lgray", "%s" % (self.__user))) + " " + color.color('lgray','>') + " ").strip()
+            self.__command = input(
+                color.color("underline", color.color("lgray", "%s" % self.__user)) + " " + color.color('lgray',
+                                                                                                       '>') + " ").strip()
             self.__command = self.__command.lower()
 
             if self.__command == "sessions":
@@ -338,4 +405,3 @@ class Thot():
                     print_message.execution_info("Please Enter command")
             else:
                 print_message.execution_error("Command not found")
-

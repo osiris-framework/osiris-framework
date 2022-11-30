@@ -6,9 +6,11 @@
 
 class Color:
     def __init__(self):
-        '''
+        """
             Description: This class format with colors the text passed by argument
-        '''
+        """
+        self.__text = None
+        self.__color = None
         self.__colors = {
             'end_color':'\033[0m',
             'red':'\033[91m',

@@ -11,15 +11,18 @@ from os import walk
 import re
 from utilities.Colors import color
 
+
 class Files(object):
     """
         Description: Class in charge of the management of the files inside osiris, for example listing the .py files in the folders corresponding to their modules.
     """
+
     def __init__(self):
+        self.__file = None
+        self.count_sub_folder_files_result = None
         self.__files_list = []
         self.__python_files = []
         self.__directory_list = []
-
 
     def count_sub_folder_files(self, thePath=str(getcwd())):
         self.count_sub_folder_files_result = []
@@ -84,7 +87,7 @@ class Files(object):
                         if path.isfile(source[i]):
                             shutil.copy(source[i], dest[i])
                         else:
-                            shutil.copytree(source[i], dest[i]+ '/' + source[i])
+                            shutil.copytree(source[i], dest[i] + '/' + source[i])
                 except IndexError:
                     pass
             else:
@@ -127,10 +130,19 @@ class UpdateModuleDB(object):
     """
         Description: Class in charge of updating the new commands for the modules added to the osiris folders.
     """
+
+    def __init__(self):
+        self.__clean_text = None
+        self.__data = None
+        self.__text = None
+        self.__cant_modules = None
+        self.__result = None
+        self.__unfiltered_result = None
+        self.__path_finish = None
+
     def update_path_module(self, name_folder):
         import utilities.Files
         reload(utilities.Files)
-        self.__path_finish = ''
 
         from utilities.Files import files
         self.__cant_modules = files.count_sub_folder_files(name_folder)
@@ -159,7 +171,9 @@ class UpdateModuleDB(object):
                         self.__thePath.remove(self.__path_first_index)
                         self.__thePath = '/'.join(self.__thePath)
                         self.__path_finish += "                            \"use " + self.__thePath + "\"" + ',' + '\n'
-                        print(color.color("yellow", "[!] Loading {} ".format(name_folder) + color.color("green", "{}".format(self.__thePath))))
+                        print(color.color("yellow", "[!] Loading {} ".format(name_folder) + color.color("green",
+                                                                                                        "{}".format(
+                                                                                                            self.__thePath))))
         except IndexError:
             pass
         except ImportError:
@@ -184,6 +198,7 @@ class UpdateModuleDB(object):
             patter = re.compile('### start.*?### end', re.I | re.S)
             self.__clean_text = patter.sub(_new, self.__data)
             _f.write(self.__clean_text)
+
 
 files = Files()
 update_modules = UpdateModuleDB()

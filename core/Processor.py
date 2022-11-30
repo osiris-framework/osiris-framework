@@ -4,42 +4,48 @@
 # Version 1.0
 # Date: 14/11/2022
 
+import threading
 from core.thot.Thot import Thot
 from tabulate import tabulate
 from utilities.Colors import color
-from utilities.Messages import print_message
-print_message.name_module = __file__
 from utilities.Tools import tools
-import threading
+from utilities.Messages import print_message
+
+print_message.name_module = __file__
+
 
 class Processor():
     def __init__(self):
-        self.__payload_options  = {}
+        self.___result_connection = None
+        self.__thread2 = None
+        self.__thread = None
+        self.__connection = None
+        self.__data_connection = None
+        self.__payload_options = {}
         self.__exploit_options = {}
-        self.__rhost = ""
-        self.__rport = ""
-        self.__lhost = ""
-        self.__lport = ""
         self.__payload_select = ""
 
     def multi_handler(self, **kwargs):
 
         try:
             self.__payload_options = kwargs['payload_options']
-            self.__exploit_options =  kwargs['exploit_options']
+            self.__exploit_options = kwargs['exploit_options']
             self.__payload_select = self.__exploit_options['payload'][2]
 
             if 'generic/shell/bind_tcp' in self.__payload_select:
-                self.__data_connection = str(self.__payload_options["rhost"][2] + str(":") + self.__payload_options["rport"][2])
-                print_message.execution_info("THOT is starting up for a connection on {}".format(self.__data_connection))
+                self.__data_connection = str(
+                    self.__payload_options["rhost"][2] + str(":") + self.__payload_options["rport"][2])
+                print_message.execution_info(
+                    "THOT is starting up for a connection on {}".format(self.__data_connection))
                 self.__connection = Thot(tuple(self.__data_connection.split(":")), self.__payload_select)
                 self.__connection.search_bind()
 
             elif 'generic/shell/reverse_tcp' in self.__payload_select:
-                self.__data_connection = str(self.__payload_options["lhost"][2] + str(":") + self.__payload_options["lport"][2])
+                self.__data_connection = str(
+                    self.__payload_options["lhost"][2] + str(":") + self.__payload_options["lport"][2])
                 if tools.get_port_use(self.__payload_options['lport'][2])['code'] != 200:
                     try:
-                        self.__connection  = Thot(tuple(self.__data_connection.split(":")), self.__payload_select)
+                        self.__connection = Thot(tuple(self.__data_connection.split(":")), self.__payload_select)
                         self.__thread = threading.Thread(target=self.__connection.create_worker, daemon=True)
                         self.__thread2 = threading.Thread(target=self.__connection.create_jobs, daemon=True)
 
@@ -62,8 +68,8 @@ class Processor():
                  color.color('yellow', 'PORT'), color.color('yellow', 'DESCRIPTION CONNECTION')]]
 
             self.___result_connection.append([color.color('red', 'NOT CONNECTIONS'), color.color('red', 'CONNECTIONS'),
-                            color.color('red', 'CONNECTIONS'), color.color('red', 'NOT CONNECTIONS'),
-                            color.color('red', 'NOT CONNECTIONS')])
+                                              color.color('red', 'CONNECTIONS'), color.color('red', 'NOT CONNECTIONS'),
+                                              color.color('red', 'NOT CONNECTIONS')])
             print('\n')
             print(tabulate(self.___result_connection, headers='firstrow', tablefmt='simple', stralign='center'))
 
@@ -78,5 +84,6 @@ class Processor():
             self.__connection.quit_gracefully()
         except Exception as Error:
             pass
+
 
 processor = Processor()

@@ -16,8 +16,33 @@ from platform import system
 from subprocess import STDOUT, check_output
 from tempfile import gettempdir
 
+
 class Tools(object):
     def __init__(self):
+        self.__temp_dir = None
+        self.__platform = None
+        self.___response = None
+        self.__result_dictionary = None
+        self.__port = None
+        self.__host = None
+        self.__cert_subject = None
+        self.__valid_till = None
+        self.__valid_from = None
+        self.__context = None
+        self.__san = None
+        self.__ext_count = None
+        self.__cert = None
+        self.__oscon = None
+        self.__osobj = None
+        self.__sock = None
+        self.__address = None
+        self.__prefix = None
+        self.__start = None
+        self.___end = None
+        self.__dec_address = None
+        self.__bin_address = None
+        self.__mask = None
+        self.__IPV4 = None
         self.__status = {'message': '', 'code': 0}
         self.status_code = {
             100: 'Continue',
@@ -93,7 +118,7 @@ class Tools(object):
         			25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.( 
         			25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)'''
 
-        if (search(self.__regex, IPV4)):
+        if search(self.__regex, IPV4):
             return True
         else:
             return False
@@ -107,14 +132,16 @@ class Tools(object):
                 self.__address, self.__mask = self.__IPV4.split('/')
                 self.__mask = int(self.__mask)
 
-                self.__bin_address = ''.join([ (8 - len(bin(int(_i))[2:])) * '0' + bin(int(_i))[2:] for _i in  self.__address.split('.')])
+                self.__bin_address = ''.join(
+                    [(8 - len(bin(int(_i))[2:])) * '0' + bin(int(_i))[2:] for _i in self.__address.split('.')])
                 self.__start = self.__bin_address[:self.__mask] + (32 - self.__mask) * '0'
                 self.___end = self.__bin_address[:self.__mask] + (32 - self.__mask) * '1'
                 self.__bin_address = [(32 - len(bin(int(_i))[2:])) * '0' + bin(_i)[2:] for _i in
-                              range(int(self.__start, 2), int(self.___end, 2) + 1)]
+                                      range(int(self.__start, 2), int(self.___end, 2) + 1)]
 
-                self.__dec_address = ['.'.join([str(int(self.__bin_address[8 * _i:8 * (_i + 1)], 2)) for _i in range(0, 4)]) for
-                              self.__bin_address in self.__bin_address]
+                self.__dec_address = [
+                    '.'.join([str(int(self.__bin_address[8 * _i:8 * (_i + 1)], 2)) for _i in range(0, 4)]) for
+                    self.__bin_address in self.__bin_address]
 
                 self.__status['message'] = self.__dec_address
                 self.__status['code'] = 200
@@ -130,7 +157,8 @@ class Tools(object):
                 self.__status['message'] = [self.__IPV4]
                 self.__status['code'] = 200
         else:
-            self.__status['message'] = "IPV4 format is not allowed, you can use 127.0.0.1-range, 127.0.0.1/mask or 127.0.0.1 format."
+            self.__status[
+                'message'] = "IPV4 format is not allowed, you can use 127.0.0.1-range, 127.0.0.1/mask or 127.0.0.1 format."
             self.__status['code'] = 500
         return self.__status
 
@@ -142,7 +170,10 @@ class Tools(object):
             __socket.connect((__address, __port))
             __banner = str(__socket.recv(1024).decode())
             __socket.close()
-            self.__status['message'] = color.color("green","[+] ") + color.color("lgray",str(__address)) + color.color("red",":") +color.color("lgray",str(__port)) + color.color("yellow"," Banner:") + color.color("lgray",str(__banner))
+            self.__status['message'] = color.color("green", "[+] ") + color.color("lgray",
+                                                                                  str(__address)) + color.color("red",
+                                                                                                                ":") + color.color(
+                "lgray", str(__port)) + color.color("yellow", " Banner:") + color.color("lgray", str(__banner))
             self.__status['code'] = 200
 
         except Exception as Error:
@@ -189,7 +220,7 @@ class Tools(object):
                 self.__san = self.__ext.__str__()
         # replace commas to not break csv output
         self.__san = self.__san.replace(',', ';')
-        self.__status['message'] =  self.__san
+        self.__status['message'] = self.__san
         self.__status['code'] = 200
 
         return self.__status
@@ -214,17 +245,17 @@ class Tools(object):
 
         # Valid from
         self.__valid_from = datetime.strptime(self.__cert.get_notBefore().decode('ascii'),
-                                        '%Y%m%d%H%M%SZ')
+                                              '%Y%m%d%H%M%SZ')
         self.__context['valid_from'] = self.__valid_from.strftime('%Y-%m-%d')
 
         # Valid till
         self.__valid_till = datetime.strptime(self.__cert.get_notAfter().decode('ascii'),
-                                        '%Y%m%d%H%M%SZ')
+                                              '%Y%m%d%H%M%SZ')
         self.__context['valid_till'] = self.__valid_till.strftime('%Y-%m-%d')
 
         # Validity days
         self.__context['validity_days'] = (self.__valid_till - self.__valid_from).days
-        self.__status['message'] =  self.__context
+        self.__status['message'] = self.__context
         self.__status['code'] = 200
 
         return self.__status
@@ -286,7 +317,8 @@ class Tools(object):
                 self.__status['code'] = 200
         elif 'darwin' in self.__platform:
             try:
-                if '*.{}'.format(__port) in check_output("netstat -antp tcp", stderr=STDOUT, timeout=10, shell=True).decode():
+                if '*.{}'.format(__port) in check_output("netstat -antp tcp", stderr=STDOUT, timeout=10,
+                                                         shell=True).decode():
                     self.__status['code'] = 500
             except Exception as Error:
                 print(Error)

@@ -8,11 +8,16 @@
 import readline
 from glob import glob
 
+
 def thot_completer():
+    def pathCompleter(text, state):
+        line = readline.get_line_buffer().split()
+        return [x for x in glob(text + '*')][state]
+
     class tabCompleter(object):
-        def pathCompleter(self, text, state):
-            line = readline.get_line_buffer().split()
-            return [x for x in glob(text + '*')][state]
+
+        def __init__(self):
+            self.listCompleter = None
 
         def createListCompleter(self, ll):
             pass

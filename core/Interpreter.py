@@ -19,9 +19,19 @@ class Interpreter(object):
     """
         Description: This class has the methods to check if there is a new version of osiris, the methods to search for modules with the search command, and the method that starts the osiris interpreter at the prompt.
     """
+
     def __init__(self):
+        self.__main_ask = None
+        self.__new_version = None
+        self.__current_version = None
+        self.__thePath = None
+        self.__pathFirstIndex = None
+        self.__search_module = None
+        self.__result = None
+        self.__unfiltered_result = None
+        self.__cant_modules = None
         self.__path_current_version = 'core/version.txt'
-        self.__url_new_version = 'https://raw.githubusercontent.com/sasaga/sasaga/Osiris-framework/master/core/version.txt'
+        self.__url_new_version = 'https://raw.githubusercontent.com/osiris-framework/osiris-framework/master/core/version.txt'
 
     def search_module(self, query):
         import utilities.Files
@@ -34,7 +44,7 @@ class Interpreter(object):
         self.__unfiltered_result = []
         self.__result = []
 
-        self.__search_module = [[color.color('yellow','Modules'),color.color('yellow','Description')]]
+        self.__search_module = [[color.color('yellow', 'Modules'), color.color('yellow', 'Description')]]
 
         for first_result in files.count_sub_folder_files_result:
             for second_result in first_result:
@@ -50,23 +60,24 @@ class Interpreter(object):
         try:
             for i in range(int(self.__cant_modules)):
                 for root, dirs, files in walk('modules'):
-                    if query in root+self.__result[i]:
-                        if self.__result[i]+'.py' in files:
-                            self.__thePath = path.join(root, self.__result[i]+'.py')
+                    if query in root + self.__result[i]:
+                        if self.__result[i] + '.py' in files:
+                            self.__thePath = path.join(root, self.__result[i] + '.py')
                             self.__thePath = self.__thePath.split('/')
                             self.__pathFirstIndex = self.__thePath[0]
                             self.__thePath.remove(self.__pathFirstIndex)
                             self.__thePath = '/'.join(self.__thePath)
-
+                            print(self.__thePath)
                             if obtainer.description_obtainer(self.__thePath.split('.py')[0]):
-                                self.__search_module.append([self.__thePath.split('.py')[0],obtainer.info['description']])
+                                self.__search_module.append(
+                                    [self.__thePath.split('.py')[0], obtainer.info['description']])
         except IndexError:
             pass
         except ImportError:
             pass
 
         if len(self.__search_module) == 1:
-            self.__search_module.append([color.color('red','NO RESULTS'),color.color('red','NO RESULTS')])
+            self.__search_module.append([color.color('red', 'NO RESULTS'), color.color('red', 'NO RESULTS')])
 
         print(tabulate(self.__search_module, headers='firstrow', tablefmt='grid', stralign='center'))
         print('')
@@ -77,15 +88,16 @@ class Interpreter(object):
             self.__new_version = urlopen(self.__url_new_version).read()
 
             if float(self.__current_version) < float(self.__new_version):
-                print(color.color("green","[+]") + color.color("blue", "Congratulations There is a new version of osiris-framework"))
+                print(color.color("green", "[+] ") + color.color("lgray","Congratulations, there is a new version ") +color.color("yellow", str("v")+str(self.__new_version.decode())) + color.color("lgray"," of the osiris framework"))
             else:
-                print(color.color("yellow","[!]") + color.color("lgray", "You have the most recent version of osiris-framework"))
+                print(color.color("yellow", "[!] ") + color.color("lgray",
+                                                                 "You have the most recent version of osiris-framework"))
         except FileNotFoundError:
-            print(color.color("red", "[-]") + color.color("lgray",
-                                                              "sorry, check if the core/version.txt file exists and try again"))
+            print(color.color("red", "[-] ") + color.color("lgray",
+                                                          "sorry, check if the core/version.txt file exists and try again"))
         except URLError:
-            print(color.color("red", "[-]") + color.color("lgray",
-                                                              "Please check the internet connection and try again"))
+            print(color.color("red", "[-] ") + color.color("lgray",
+                                                          "Please check the internet connection and try again"))
 
     def start_interpreter(self):
         completer()
@@ -93,7 +105,7 @@ class Interpreter(object):
         while True:
             try:
                 self.__main_ask = input(color.color("underline",
-                                                    color.color("lgray", "%s" % ("osiris"))) + " " + color.color(
+                                                    color.color("lgray", "%s" % "osiris")) + " " + color.color(
                     'lgray', '>') + " ").split()
                 Validator(self.__main_ask).validate_interpreter_mode()
             except (KeyboardInterrupt, EOFError):

@@ -15,6 +15,23 @@ class ModuleObtainer(object):
         Description: Class in charge of loading all the module logic when the use command is used.
     """
 
+    def __init__(self):
+        self.__option_message_payload = None
+        self.__path_payload = None
+        self.__payload = None
+        self.extra_info = None
+        self.check = None
+        self.required = None
+        self.info = None
+        self.options_payload = None
+        self.__path_payloads = None
+        self.options = None
+        self.exploit = None
+        self.__module = None
+        self.__module_path = None
+        self.__module_name = None
+        self.__category = None
+
     def obtaining_info(self, module):
         try:
             self.__module = str(module)
@@ -103,7 +120,6 @@ class ModuleObtainer(object):
             print('\n')
 
         except Exception as Error:
-            print(Error)
             return False
 
 obtainer = ModuleObtainer()

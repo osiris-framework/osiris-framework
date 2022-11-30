@@ -7,6 +7,7 @@
 from core.Interpreter import interpreter
 from core.Banner import banner
 
+
 def main():
     banner.banner_welcome()
     while True:
@@ -14,4 +15,4 @@ def main():
 
 
 if __name__ == '__main__':
-	main()
+    main()

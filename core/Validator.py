@@ -17,10 +17,12 @@ from core.Interpreter import interpreter
 from utilities.Files import update_modules
 from core.Processor import processor
 
+
 class Validator(object):
     """
         Description: Class that manages the invocation of osiris commands.
     """
+
     def __init__(self, command):
         self.__command = command
 
@@ -30,15 +32,16 @@ class Validator(object):
                 ScreenCleaner()
             elif self.__command[0].lower() == 'search':
                 try:
-                    interpreter.search_module(query = self.__command[1])
+                    interpreter.search_module(query=self.__command[1])
                 except IndexError:
                     print(color.color("yellow", "[!]") + color.color("lgray",
-                                                                      " Invalid syntax must enter the search query!"))
+                                                                     " Invalid syntax must enter the search query!"))
                 except TypeError:
                     pass
             elif self.__command[0].lower() == 'banner':
                 banner.banner_welcome()
-            elif self.__command[0].lower() == 'exit' or self.__command[0].lower() == 'close' or self.__command[0].lower() == 'quit':
+            elif self.__command[0].lower() == 'exit' or self.__command[0].lower() == 'close' or self.__command[
+                0].lower() == 'quit':
                 processor.kill_connections()
                 exit(0)
             elif self.__command[0].lower() == 'use':
@@ -48,14 +51,15 @@ class Validator(object):
                 try:
                     if obtainer.obtaining_info(self.__command[1]):
                         while True:
-                            ModuleInterpreter("/".join(self.__command[1].split("/")[1:]), self.__command[1].split('/')[0],self.__command[1])
+                            ModuleInterpreter("/".join(self.__command[1].split("/")[1:]),
+                                              self.__command[1].split('/')[0], self.__command[1])
 
                 except IndexError:
                     print(color.color("yellow", "[!]") + color.color("lgray", " Please enter the name of the module!"))
             elif self.__command[0].lower() == 'restart':
                 import core.ModuleInterpreter  # import module_interpreter module from core foloder
                 print(color.color("blue", "[~]") + color.color("lgray",
-                                                                   " Restarting the program please wait ... Finished!"))
+                                                               " Restarting the program please wait ... Finished!"))
                 reload(core.ModuleInterpreter)
                 from core.ModuleInterpreter import ModuleInterpreter
             elif self.__command[0].lower() == 'exec':
@@ -78,8 +82,8 @@ class Validator(object):
             else:
                 print(color.color("yellow", "[!]") + color.color("lgray", " Option not found :("))
 
-        except (KeyboardInterrupt,EOFError):
-            print(color.color("yellow","[!]") + color.color("lgray", "Type exit to close the program"))
+        except (KeyboardInterrupt, EOFError):
+            print(color.color("yellow", "[!]") + color.color("lgray", "Type exit to close the program"))
         except IndexError:
             return None
 
@@ -93,22 +97,22 @@ class Validator(object):
             elif self.__command[0].lower() == "banner":
                 banner.banner_welcome()
             elif self.__command[0].lower() == 'search':
-                print("entreeee")
                 try:
                     interpreter.search_module(query=self.__command[1])
                 except IndexError:
                     print(color.color("red", "[!]") + color.color("lgray",
-                                                                      " Invalid syntax must enter the search query!"))
+                                                                  " Invalid syntax must enter the search query!"))
                 except TypeError:
                     pass
-            elif self.__command[0].lower() == 'exit' or self.__command[0].lower() == 'close' or self.__command[0].lower() == "back":
+            elif self.__command[0].lower() == 'exit' or self.__command[0].lower() == 'close' or self.__command[
+                0].lower() == "back":
                 import core.Interpreter
-                from core.Completer import completer# import completer
+                from core.Completer import completer  # import completer
                 reload(core.Interpreter)
                 from core.Interpreter import interpreter
-                completer() # start completer
+                completer()  # start completer
                 while True:
-                    interpreter.start_interpreter() # restart interpreter
+                    interpreter.start_interpreter()  # restart interpreter
             elif self.__command[0].lower() == "options":
                 ModuleInterpreter.options_message(ModuleInterpreter)
 
@@ -124,18 +128,22 @@ class Validator(object):
                 try:
                     if 'payload' in self.__command[1] and '/' in self.__command[2]:
                         self.__name_payload = self.__command[2]
-                        self.__path_payloads = 'modules/payloads/'+self.__command[2]
+                        self.__path_payloads = 'modules/payloads/' + self.__command[2]
                         try:
-                            obtainer.options_payload = getattr(__import__(self.__path_payloads.replace("/","."), fromlist=['options_payload']), 'options_payload')
+                            obtainer.options_payload = getattr(
+                                __import__(self.__path_payloads.replace("/", "."), fromlist=['options_payload']),
+                                'options_payload')
                         except:
-                            print(color.color('red','[!]') + color.color("lgray"," Please select a valid payload"))
+                            print(color.color('red', '[!]') + color.color("lgray", " Please select a valid payload"))
                             return False
-                    ModuleInterpreter.command_set_call(ModuleInterpreter,self.__command[1], " ".join(self.__command[2:]))
+                    ModuleInterpreter.command_set_call(ModuleInterpreter, self.__command[1],
+                                                       " ".join(self.__command[2:]))
                 except IndexError:
-                    print(color.color("red","[!]") + color.color("lgray", " Invalid syntax you must enter the option and the new value!"))
+                    print(color.color("red", "[!]") + color.color("lgray",
+                                                                  " Invalid syntax you must enter the option and the new value!"))
             elif self.__command[0].lower() == 'info' or self.__command[0].lower() == 'information':
                 ModuleInterpreter.command_info_call(ModuleInterpreter)
-                ModuleInterpreter.command_set_call(ModuleInterpreter,self.__command[1], " ".join(self.__command[2:]))
+                ModuleInterpreter.command_set_call(ModuleInterpreter, self.__command[1], " ".join(self.__command[2:]))
             elif self.__command[0].lower() == 'exploit' or self.__command[0].lower() == 'run':
                 self.__opt = []
                 self.__val = []
@@ -161,7 +169,7 @@ class Validator(object):
 
                             if len(self.__val[self.__i]) <= 0:
                                 print(color.color("red", "[!]") + color.color("lgray",
-                                                                                  " You must set the option {0}").format(
+                                                                              " You must set the option {0}").format(
                                     self.__opt[self.__i]))
                                 return False
                                 # _flag = True
@@ -181,7 +189,7 @@ class Validator(object):
                     obtainer.check()
                 else:
                     print(color.color("red", "[!]") + color.color("lgray",
-                                                                      " The module does not have verification option!"))
+                                                                  " The module does not have verification option!"))
             elif self.__command[0].lower() == 'exec' or self.__command[0].lower() == 'execute':
                 try:
                     self.__command.remove('exec' if self.__command[0] == 'exec' else 'execute')
