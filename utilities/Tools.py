@@ -16,10 +16,13 @@ from platform import system
 from subprocess import STDOUT, check_output
 from tempfile import gettempdir
 from json import load
+import secrets, string
 
 
 class Tools(object):
     def __init__(self):
+        self.__letters = None
+        self.__generate_value = None
         self.__temp_dir = None
         self.__platform = None
         self.___response = None
@@ -346,5 +349,19 @@ class Tools(object):
                 yield load(fh)
         except Exception as Error:
             pass
+    def generate_id(self, __uid_length, __session_name="thot-session-"):
+        self.__status = {'message': '', 'code': 0}
+        self.__generate_value = __session_name
+        self.__letters = string.ascii_letters + string.digits
+
+        for i in range(__uid_length):
+            self.__generate_value += ''.join(secrets.choice(self.__letters))
+
+        if len(self.__generate_value) - len(__session_name) == __uid_length:
+            self.__status['code'] = 200
+            self.__status['message'] = self.__generate_value
+
+        return self.__status
+
 
 tools = Tools()

@@ -17,7 +17,7 @@ from utilities.ScreenCleaner import ScreenCleaner
 from tabulate import tabulate
 from os import system
 from utilities.Messages import print_message
-
+from utilities.Tools import tools
 print_message.name_module = __file__
 
 _exit_flag = False
@@ -26,10 +26,11 @@ _all_address = []
 _all_info = []
 _num_connections = 1
 _type_connection = []
-
+_connections_name = []
 
 class Thot:
     def __init__(self, __user_connection, __type_connection):
+        self.__response_name_id = None
         self.__user = None
         self.__sock = None
         self.__cont_connect_bind_tcp = None
@@ -81,6 +82,11 @@ class Thot:
                 self.__user_connection.setblocking(1)
                 _all_connections.append(self.__user_connection)
                 _all_address.append(self.__user_address)
+
+                self.__response_name_id = tools.generate_id(6)
+                if self.__response_name_id['code'] == 200:
+                    _connections_name.append(self.__response_name_id['message'])
+
                 _all_info.append(
                     color.color("lgray", "(") + color.color("yellow", self.__address) + color.color("red",
                                                                                                     ":") + color.color(
@@ -114,6 +120,7 @@ class Thot:
         global _all_address
         global _all_info
         global _num_connections
+        global _connections_name
 
         self.__now = datetime.now()
         self.__time_of_connection = " Time Local: ", self.__now.strftime('%H:%M:%S %Y/%m/%d')
@@ -123,6 +130,11 @@ class Thot:
         try:
             _all_connections.append(self.__connection)
             _all_address.append(self.__address)
+
+            self.__response_name_id = tools.generate_id(6)
+            if self.__response_name_id['code'] == 200:
+                _connections_name.append(self.__response_name_id['message'])
+
             _all_info.append(
                 color.color("lgray", "(") + color.color("yellow", self.__address[0]) + color.color("red",
                                                                                                    ":") + color.color(
@@ -213,6 +225,7 @@ class Thot:
 
     def transfer(self, __connection):
         global _exit_flag
+        global _connections_name
         self.__socket_fd = __connection
         self.__buffer_size = 0x400
 
@@ -237,22 +250,41 @@ class Thot:
                 print(self.__target_selected)
                 self.remove_node(self.__socket_fd)
                 _exit_flag = False
+                try:
+                    self.remove_id_connection_target()
+                except:
+                    pass
                 break
 
             sys.stdout.write(color.color("lgray", self.__buffer.decode('utf-8')))
         return
 
+    def get_id_connection_target(self):
+        global _connections_name
+
+        for id, session_name in enumerate(_connections_name):
+            if (session_name.strip().lower()) == (self.__target.strip().lower()):
+                return id
+
+    def remove_id_connection_target(self):
+        global _connections_name
+        del _connections_name[self.__target]
+        del _type_connection[self.__target]
+
     def get_targets(self, __cmd):
         global _exit_flag
         global _all_connections
         global _all_address
+        global _num_connections
+
         self.__target = __cmd.replace('select', '')
-        self.__target = int(self.__target)
+        self.__target = int(self.get_id_connection_target())
         _exit_flag = False
 
         try:
             self.__conn = _all_connections[self.__target]
-        except:
+        except Exception as Error:
+            print(Error)
             return
 
         self.__target_selected = color.color("yellow", "[!] ") + color.color("red",
@@ -304,6 +336,7 @@ class Thot:
         global _type_connection
         global _all_address
         global _all_info
+        global _connections_name
 
         try:
             self.__result = [[color.color('yellow', 'ID'), color.color('yellow', 'TYPE'), color.color('yellow', 'HOST'),
@@ -314,17 +347,19 @@ class Thot:
                     self.__theConnection = _type_connection[__i]
                 except:
                     _type_connection.append("unknown")
+
                 self.__result.append(
-                    [color.color("green_ptrl", str(__i)), color.color("lgray", str(_type_connection[__i])),
+                    [color.color("green_ptrl", str(_connections_name[__i])), color.color("lgray", str(_type_connection[__i])),
                      color.color("green", str(_all_address[__i][0])), color.color("green", str(_all_address[__i][1])),
                      str(_all_info[__i])])
 
                 if len(self.__result) == 1:
                     self.__result.append([color.color('red', 'NOT CONNECTIONS'), color.color('red', 'CONNECTIONS'),
-                                          color.color('red', 'CONNECTIONS')])
-        except:
+                                          color.color('red', 'CONNECTIONS'),color.color('red', 'NOT CONNECTIONS')])
+        except Exception as Error:
+            print(Error)
             self.__result.append([color.color('red', 'NOT CONNECTIONS'), color.color('red', 'CONNECTIONS'),
-                                  color.color('red', 'CONNECTIONS')])
+                                  color.color('red', 'CONNECTIONS'),color.color('red', 'NOT CONNECTIONS')])
 
         print('\n')
         print(tabulate(self.__result, headers='firstrow', tablefmt='simple', stralign='center'))

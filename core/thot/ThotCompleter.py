@@ -8,7 +8,6 @@
 import readline
 from glob import glob
 
-
 def thot_completer():
     def pathCompleter(text, state):
         line = readline.get_line_buffer().split()
@@ -34,9 +33,7 @@ def thot_completer():
     t = tabCompleter()
 
     # tool command
-    t.createListCompleter(["clear", "exit", "exec", 'help', "sessions", "background", "select"
-                           ### end
-                           ])
+    t.createListCompleter(["clear", "exit", "exec", 'help', "sessions", "background", "select"])
     readline.set_completer_delims('\t')
     readline.parse_and_bind("tab: complete")
     readline.set_completer(t.listCompleter)
