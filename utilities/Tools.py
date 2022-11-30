@@ -15,6 +15,7 @@ from tabulate import tabulate
 from platform import system
 from subprocess import STDOUT, check_output
 from tempfile import gettempdir
+from json import load
 
 
 class Tools(object):
@@ -339,5 +340,11 @@ class Tools(object):
 
         return self.__status
 
+    def read_json_file(self, __file_name):
+        try:
+            with open(__file_name) as fh:
+                yield load(fh)
+        except Exception as Error:
+            pass
 
 tools = Tools()
