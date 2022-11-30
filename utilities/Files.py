@@ -141,6 +141,7 @@ class UpdateModuleDB(object):
         self.__path_finish = None
 
     def update_path_module(self, name_folder):
+        self.__path_finish = ""
         import utilities.Files
         reload(utilities.Files)
 
