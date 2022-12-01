@@ -7,6 +7,8 @@ import os
 import platform
 from re import search
 import socket
+import urllib.request
+import shutil
 from utilities.Colors import color
 from OpenSSL import SSL, crypto
 from ssl import PROTOCOL_TLSv1
@@ -346,5 +348,49 @@ class Tools(object):
                 yield load(fh)
         except Exception as Error:
             pass
+
+    def get_universal_platform(self):
+        self.__known_os = ['linux', 'windows', 'osx', 'unknown platform']
+        self.__status = {'message': '', 'code': 0}
+        self.__platform = system().lower()
+        if 'linux' in self.__platform:
+            try:
+                self.__status['message'] = self.__known_os[0]
+                self.__status['code'] = 200
+            except Exception:
+                self.__status['code'] = 500
+        elif 'darwin' in self.__platform:
+            try:
+                self.__status['message'] = self.__known_os[2]
+                self.__status['code'] = 200
+            except Exception as Error:
+                self.__status['code'] = 500
+        elif 'win32' in self.__platform:
+            try:
+                self.__status['message'] = self.__known_os[1]
+                self.__status['code'] = 200
+            except Exception as Error:
+                self.__status['code'] = 500
+        else:
+            self.__status['message'] = self.__known_os[3]
+            self.__status['code'] = 500
+
+        return self.__status
+
+    # Function for download files through urllib
+    def download_files_by_url(self, file_src_url, file_dest) -> 'http://example.com/something.pdf':
+        try:
+            with urllib.request.urlopen(file_src_url) as response, open(file_dest, 'wb') as out_file:
+                shutil.copyfileobj(response, out_file)
+                #file_write = open(file_dest, 'w')
+                #file_write.write(response)
+
+            self.__status['message'] = [ file_src_url, file_dest]
+            self.__status['code'] = 200
+        except Exception as Error:
+            self.__status['message'] = str(Error)
+            self.__status['code'] = 500
+            print( str(Error))
+        return self.__status
 
 tools = Tools()
