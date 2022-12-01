@@ -49,19 +49,10 @@ find_words_files = ["password", "clave", "contraseña", "contraseñas", "claves"
 
 session = requests.Session()
 
+
 def generate_random_chars(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
-def reset_eof_pdf_stream(pdf_stream_in:list):
-    # find the line position of the EOF
-    for i, x in enumerate(pdf_stream_in[::-1]):
-        if b'%%EOF' in x:
-            actual_line = len(pdf_stream_in)-i
-            print(f'EOF found at line position {-i} = actual {actual_line}, with value {x}')
-            break
-
-    # return the list up to that point
-    return pdf_stream_in[:actual_line]
 
 def extract_images_docx(filename, _results_folder):
     extracted_images_result = _results_folder + 'extracted_images/'
@@ -81,6 +72,7 @@ def extract_images_pdf(filename, _results_folder):
         for image in page.images:
             with open(extracted_images_result + generate_random_chars() + image.name, "wb") as fp:
                 fp.write(image.data)
+
 
 def get_metadata(filename):
     find_strings = re.compile(r"^(.*?)\..*")
