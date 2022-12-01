@@ -11,3 +11,4 @@ bs4
 PyPDF2
 docx2txt
 pyexiftool
+Pillow
