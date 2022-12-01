@@ -148,7 +148,7 @@ def _get_recursive_links(base, _results_folder):
                         match = find_words("".join(str(x) for x in strings_), find_text)
                         if match:
                             print(color.color("cyan", "[+] Interesting file found: -> " + str(filename)))
-                            interesting_files = open('interesting_files.txt', 'a+')
+                            interesting_files = open(temp_results_folder + '/interesting_files.txt', 'a+')
                             interesting_files.write('\n' + str(filename))
 
             except Exception as inst:
