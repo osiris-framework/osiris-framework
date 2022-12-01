@@ -16,150 +16,80 @@ from core.thot.Help import help
 from utilities.ScreenCleaner import ScreenCleaner
 from tabulate import tabulate
 from os import system
-from utilities.Messages import print_message
 from utilities.Tools import tools
+from utilities.Messages import print_message
+
 print_message.name_module = __file__
 
+_pool_connections = {}
 _exit_flag = False
-_all_connections = []
-_all_address = []
-_all_info = []
-_num_connections = 1
-_type_connection = []
-_connections_name = []
+_count_connections = 1
+
 
 class Thot:
     def __init__(self, __user_connection, __type_connection):
-        self.__response_name_id = None
+        self.__threads_create_worker = None
         self.__user = None
-        self.__sock = None
-        self.__cont_connect_bind_tcp = None
-        self.__theConnection = None
-        self.__result = None
         self.__command = None
-        self.__thread = None
-        self.__target_selected = None
-        self.__conn = None
+        self.__thread_get_target = None
+        self.__connection_id_get_target = None
+        self.__connection_get_target = None
         self.__target = None
+        self.__id_connection_transfer = None
+        self.__target_selected = None
         self.__buffer = None
         self.__buffer_size = None
         self.__socket_fd = None
         self.__x = None
-        self.__connection = None
-        self.__user_address = None
-        self.__user_connection = None
+        self.__port_work = None
+        self.__host_work = None
+        self.__port_accept_connections = None
+        self.__address_accept_connections = None
+        self.__connection_accept_connections = None
+        self.__user_data_connection = None
+        self.__result_list_connections = None
+        self.__count_connect_bind_tcp = None
+        self.__sock_connect_bind_tcp = None
+        self.__thread_search_bind = None
+        self.__session_id_name = None
+        self.__response_name_id = None
+        self.__port_accept_connections_bind = None
+        self.__address_accept_connections_bind = None
+        self.__connection_accept_connections_bind = None
         self.__time_of_connection = None
         self.__now = None
         self.__socket = None
-        self.__host = None
-        self.__address, self.__port = __user_connection
+        self.__port_socket_create = None
+        self.__host_socket_create = None
+        self.__address_init_connection, self.__port_init_connection = __user_connection
+        self.__type_connection = __type_connection
+        self.__queue = Queue()
         self.__number_threads = 2
         self.__jobs_number = [1, 2]
-        self.__queue = Queue()
         self.__connection_retry_bind = 7
 
-        _type_connection.append(__type_connection)
+        self.__length_id_name = 6
 
     def socket_create(self, __host, __port):
         try:
-            self.__host = __host
-            self.__port = __port
+            self.__host_socket_create = __host
+            self.__port_socket_create = __port
             self.__socket = socket.socket()
         except socket.error as Error:
             print_message.execution_error(Error)
 
-    def accept_connections(self):
-        self.__now = datetime.now()
-        self.__time_of_connection = " Time Local: ", self.__now.strftime('%H:%M:%S %Y/%m/%d')
-        global _all_connections
-        global _all_address
-        global _all_info
-        global _num_connections
-
-        while True:
-            try:
-                self.__user_connection, self.__user_address = self.__socket.accept()
-                self.__user_connection.setblocking(1)
-                _all_connections.append(self.__user_connection)
-                _all_address.append(self.__user_address)
-
-                self.__response_name_id = tools.generate_id(6)
-                if self.__response_name_id['code'] == 200:
-                    _connections_name.append(self.__response_name_id['message'])
-
-                _all_info.append(
-                    color.color("lgray", "(") + color.color("yellow", self.__address) + color.color("red",
-                                                                                                    ":") + color.color(
-                        "yellow", str(self.__port)) + color.color("red", str(" -> ")) + color.color("yellow", str(
-                        self.__user_address[0])) + color.color("red", str(":")) + color.color("yellow", str(
-                        self.__user_address[1])) + str(" ") + color.color("lgray", str(
-                        self.__time_of_connection[0])) + color.color("red",
-                                                                     str(self.__time_of_connection[1])) + color.color(
-                        "lgray", str(")"))
-                )
-                print(
-                    color.color("green", "[ info ] ") + color.color("lgray", "THOT interactive session ") + color.color(
-                        "yellow", str(_num_connections)) + color.color("lgray", " opened (") + color.color("yellow",
-                                                                                                           self.__address) + color.color(
-                        "red", ":") + color.color("yellow", str(self.__port)) + color.color("red",
-                                                                                            str(" -> ")) + color.color(
-                        "yellow", str(self.__user_address[0])) + color.color("red", str(":")) + color.color("yellow",
-                                                                                                            str(
-                                                                                                                self.__user_address[
-                                                                                                                    1])) + str(
-                        " ") + color.color("lgray", str(self.__time_of_connection[0])) + color.color("red", str(
-                        self.__time_of_connection[1])) + color.color("lgray", str(")")))
-
-                _num_connections += 1
-            except Exception as Error:
-                print(Error)
-                print_message.execution_error("There was an error accepting connections")
-
-    def accept_connections_bind(self, __connection, __data_connection):
-        global _all_connections
-        global _all_address
-        global _all_info
-        global _num_connections
-        global _connections_name
-
-        self.__now = datetime.now()
-        self.__time_of_connection = " Time Local: ", self.__now.strftime('%H:%M:%S %Y/%m/%d')
-        self.__connection = __connection
-        self.__address = __data_connection
-
-        try:
-            _all_connections.append(self.__connection)
-            _all_address.append(self.__address)
-
-            self.__response_name_id = tools.generate_id(6)
-            if self.__response_name_id['code'] == 200:
-                _connections_name.append(self.__response_name_id['message'])
-
-            _all_info.append(
-                color.color("lgray", "(") + color.color("yellow", self.__address[0]) + color.color("red",
-                                                                                                   ":") + color.color(
-                    "yellow", str(self.__port)) + color.color("lgray", str(self.__time_of_connection[0])) + color.color(
-                    "red", str(self.__time_of_connection[1])) + color.color("lgray", str(")"))
-            )
-
-            print(color.color("green", "[ info ] ") + color.color("lgray", "THOT interactive session ") + color.color(
-                "yellow", str(_num_connections)) + color.color("lgray", " opened (") + color.color("yellow",
-                                                                                                   self.__address[
-                                                                                                       0]) + color.color(
-                "red", ":") + color.color("yellow", str(self.__port)) + color.color("red", str(" -> ")) + color.color(
-                "yellow", str(self.__address[0])) + color.color("red", str(":")) + color.color("yellow", str(
-                self.__address[1])) + str(" ") + color.color("lgray", str(self.__time_of_connection[0])) + color.color(
-                "red", str(self.__time_of_connection[1])) + color.color("lgray", str(")")))
-            _num_connections += 1
-        except Exception as Error:
-            print_message.execution_error("There was an error connecting to the remote host {}".format(Error))
+    def generate_id_connection(self):
+        self.__response_name_id = tools.generate_id(self.__length_id_name)
+        if self.__response_name_id['code'] == 200:
+            return self.__response_name_id['message']
 
     def socket_bind(self):
         try:
-            print(color.color("green", "[ info ] ") + color.color("cyan", "Thot is listening on %s:%d..." % (
-                self.__host, self.__port)))
+            print(color.color("green", "[ info ] ") + color.color("cyan", "Thot is listening on {}:{}...".format(
+                self.__host_socket_create, self.__port_socket_create)))
+
             self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self.__socket.bind((self.__host, self.__port))
+            self.__socket.bind((self.__host_socket_create, int(self.__port_socket_create)))
             self.__socket.listen(5)
         except socket.error as Error:
             print_message.execution_error("Error starting binding service {} ".format(Error))
@@ -171,29 +101,172 @@ class Thot:
             except:
                 sys.exit(0)
 
-    def quit_gracefully(self, signal=None, frame=None):
-        global _all_connections
-        print_message.execution_info("killing connections, please wait ... ")
+    def accept_connections(self):
+        global _pool_connections
+        global _count_connections
 
-        for __connection in _all_connections:
+        self.__now = datetime.now()
+        self.__time_of_connection = " Time Local: ", self.__now.strftime('%H:%M:%S %Y/%m/%d')
+        while True:
             try:
-                __connection.shutdown(2)
-                __connection.close()
-            except Exception as Error:
-                print_message.execution_error("Could not close connection {}".format(Error))
+                self.__connection_accept_connections, self.__user_data_connection = self.__socket.accept()
+                self.__address_accept_connections, self.__port_accept_connections = self.__user_data_connection
+                self.__session_id_name = self.generate_id_connection()
 
-            sys.exit(0)
+                _pool_connections[self.__session_id_name] = {
+                    'socket': self.__connection_accept_connections,
+                    'ip_local': self.__address_init_connection,
+                    'port_local': self.__port_init_connection,
+                    'ip_remote': self.__address_accept_connections,
+                    'port_remote': self.__port_accept_connections,
+                    'type_connection': self.__type_connection,
+                    'time_session': self.__time_of_connection,
+                    'info_connection': color.color("lgray", "(") + color.color("yellow",
+                                                                               self.__address_accept_connections) + color.color(
+                        "red", ":") + color.color("yellow", str(self.__port_accept_connections)) + color.color("lgray",
+                                                                                                               str(
+                                                                                                                   self.__time_of_connection[
+                                                                                                                       0])) + color.color(
+                        "red", str(self.__time_of_connection[1])) + color.color("lgray", str(")"))
+                }
+
+                print(color.color("green", "[ info ] ") + color.color("lgray", "THOT interactive session ") + color.color(
+                    "yellow", str(_count_connections)) + color.color("lgray", " opened (") + color.color("yellow",
+                                                                                                         self.__address_accept_connections) + color.color(
+                    "red", ":") + color.color("yellow", str(self.__port_accept_connections)) + color.color("red",
+                                                                                                           str(" -> ")) + color.color(
+                    "yellow", str(
+                        self.__address_init_connection)) + color.color("red", str(":")) + color.color("yellow", str(
+                    self.__port_init_connection)) + str(" ") + color.color("lgray",
+                                                                           str(self.__time_of_connection[0])) + color.color(
+                    "red", str(self.__time_of_connection[1])) + color.color("lgray", str(")")))
+
+                _count_connections += 1
+            except Exception as Error:
+                print_message.execution_error("There was an error connecting to the remote host {}:{} Error {}".format(
+                    self.__address_accept_connections, self.__port_accept_connections, Error))
+
+    def accept_connections_bind(self, __connection, __data_connection):
+        global _pool_connections
+        global _count_connections
+        self.__now = datetime.now()
+        self.__time_of_connection = " Time Local: ", self.__now.strftime('%H:%M:%S %Y/%m/%d')
+        self.__connection_accept_connections_bind = __connection
+        self.__address_accept_connections_bind, self.__port_accept_connections_bind = __data_connection
+
+        try:
+            self.__session_id_name = self.generate_id_connection()
+
+            _pool_connections[self.__session_id_name] = {
+                'socket': self.__connection_accept_connections_bind,
+                'ip_local': self.__address_init_connection,
+                'port_local': self.__port_init_connection,
+                'ip_remote': self.__address_accept_connections_bind,
+                'port_remote': self.__port_accept_connections_bind,
+                'type_connection': self.__type_connection,
+                'time_session': self.__time_of_connection,
+                'info_connection': color.color("lgray", "(") + color.color("yellow",
+                                                                           self.__address_accept_connections_bind) + color.color(
+                    "red", ":") + color.color("yellow", str(self.__port_accept_connections_bind)) + color.color("lgray",
+                                                                                                                str(
+                                                                                                                    self.__time_of_connection[
+                                                                                                                        0])) + color.color(
+                    "red", str(self.__time_of_connection[1])) + color.color("lgray", str(")"))
+            }
+
+            print(color.color("green", "[ info ] ") + color.color("lgray", "THOT interactive session ") + color.color(
+                "yellow", str(_count_connections)) + color.color("lgray", " opened (") + color.color("yellow",
+                                                                                                     self.__address_accept_connections_bind) + color.color(
+                "red", ":") + color.color("yellow", str(self.__port_accept_connections_bind)) + color.color("red",
+                                                                                                            str(" -> ")) + color.color(
+                "yellow", str(
+                    self.__address_init_connection)) + color.color("red", str(":")) + color.color("yellow", str(
+                self.__port_init_connection)) + str(" ") + color.color("lgray",
+                                                                       str(self.__time_of_connection[0])) + color.color(
+                "red", str(self.__time_of_connection[1])) + color.color("lgray", str(")")))
+
+            _count_connections += 1
+        except Exception as Error:
+            print_message.execution_error("There was an error connecting to the remote host {}:{} Error {}".format(
+                self.__address_accept_connections_bind, self.__port_accept_connections_bind, Error))
+
+    def search_bind(self):
+        self.__thread_search_bind = threading.Thread(target=self.connect_bind_tcp, args=())
+        self.__thread_search_bind.daemon = True
+        self.__thread_search_bind.start()
+
+    def connect_bind_tcp(self):
+        self.__count_connect_bind_tcp = 1
+        while self.__connection_retry_bind > self.__count_connect_bind_tcp:
+            try:
+                self.__sock_connect_bind_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.__sock_connect_bind_tcp.connect((self.__address_init_connection, int(self.__port_init_connection)))
+                self.accept_connections_bind(self.__sock_connect_bind_tcp,
+                                             [self.__address_init_connection, int(self.__port_init_connection)])
+                return True
+            except socket.error as Error:
+                print_message.execution_info(
+                    "Trying {} to connect with {}:{}".format(self.__count_connect_bind_tcp, self.__host_socket_create,
+                                                             self.__port_socket_create))
+                sleep(1)
+                self.__count_connect_bind_tcp += 1
+
+        return True
+
+    def list_connections(self):
+        global _pool_connections
+        self.__result_list_connections = [
+            [color.color('yellow', 'ID'), color.color('yellow', 'TYPE'), color.color('yellow', 'HOST'),
+             color.color('yellow', 'PORT'), color.color('yellow', 'DESCRIPTION CONNECTION')]]
+
+        if len(_pool_connections) <= 0:
+            self.__result_list_connections.append(
+                [color.color('red', 'NOT CONNECTIONS'), color.color('red', 'CONNECTIONS'),
+                 color.color('red', 'CONNECTIONS'), color.color('red', 'NOT CONNECTIONS')])
+
+            print('\n')
+            print(tabulate(self.__result_list_connections, headers='firstrow', tablefmt='simple', stralign='center'))
+
+            return
+
+        try:
+            for __key, __connection in _pool_connections.items():
+                self.__result_list_connections.append(
+                    [color.color("green_ptrl", str(__key)),
+                     color.color("lgray", str(_pool_connections[__key]['type_connection'])),
+                     color.color("green", str(_pool_connections[__key]['ip_remote'])),
+                     color.color("green", str(_pool_connections[__key]['port_remote'])),
+                     str(_pool_connections[__key]['info_connection'])])
+
+        except Exception as Error:
+            self.__result_list_connections.append(
+                [color.color('red', 'NOT CONNECTIONS'), color.color('red', 'CONNECTIONS'),
+                 color.color('red', 'CONNECTIONS'), color.color('red', 'NOT CONNECTIONS')])
+
+        print('\n')
+        print(tabulate(self.__result_list_connections, headers='firstrow', tablefmt='simple', stralign='center'))
+
+    def kill_all_connections(self, signal=None, frame=None):
+        global _pool_connections
+
+        try:
+            for __key, __connection in _pool_connections.items():
+                _pool_connections[__key]['socket'].shutdown(2)
+                _pool_connections[__key]['socket'].close()
+
+        except Exception as Error:
+            print_message.execution_error("Could not close connection {}".format(Error))
 
     def create_worker(self):
         for _ in range(self.__number_threads):
-            __thread = threading.Thread(target=self.work, daemon=True)
-            __thread.start()
+            self.__threads_create_worker = threading.Thread(target=self.work, daemon=True)
+            self.__threads_create_worker.start()
         return
 
     def work(self):
         try:
-            self.__host = self.__address
-            self.__port = int(self.__port)
+            self.__host_work = self.__address_init_connection
+            self.__port_work = self.__port_init_connection
         except Exception as Error:
             print_message.execution_error("Connection information not included")
             self.__queue.task_done()
@@ -204,7 +277,7 @@ class Thot:
             self.__x = self.__queue.get()
 
             if self.__x == 1:
-                self.socket_create(self.__host, self.__port)
+                self.socket_create(self.__host_work, self.__port_work)
                 self.socket_bind()
                 self.accept_connections()
 
@@ -221,13 +294,30 @@ class Thot:
             except:
                 pass
 
-            return
+        return
 
-    def transfer(self, __connection):
+    def remove_client_connection(self, __id_connection):
+        global _pool_connections
+
+        try:
+            for __key, __connection in _pool_connections.items():
+                if str(__key.strip().lower()) == str(__id_connection.strip().lower()):
+                    try:
+                        _pool_connections[__key]["socket"].close()
+                    except:
+                        pass
+                    del _pool_connections[__key]
+                    break
+        except Exception as Error:
+            pass
+
+        return
+
+    def transfer(self, __id_connection, __connection):
         global _exit_flag
-        global _connections_name
         self.__socket_fd = __connection
         self.__buffer_size = 0x400
+        self.__id_connection_transfer = __id_connection
 
         while True:
             if _exit_flag:
@@ -239,91 +329,19 @@ class Thot:
                 self.__buffer = self.__socket_fd.recv(self.__buffer_size)
                 _exit_flag = False
             except Exception as Error:
-                print(Error)
                 _exit_flag = False
                 print(self.__target_selected)
-                self.remove_node(self.__socket_fd)
+                self.remove_client_connection(self.__id_connection_transfer)
                 break
 
             if not self.__buffer:
                 print_message.execution_error("No data Breaking...")
                 print(self.__target_selected)
-                self.remove_node(self.__socket_fd)
+                self.remove_client_connection(self.__id_connection_transfer)
                 _exit_flag = False
-                try:
-                    self.remove_id_connection_target()
-                except:
-                    pass
-                break
 
             sys.stdout.write(color.color("lgray", self.__buffer.decode('utf-8')))
-        return
 
-    def get_id_connection_target(self):
-        global _connections_name
-
-        for id, session_name in enumerate(_connections_name):
-            if (session_name.strip().lower()) == (self.__target.strip().lower()):
-                return id
-
-    def remove_id_connection_target(self):
-        global _connections_name
-        del _connections_name[self.__target]
-        del _type_connection[self.__target]
-
-    def get_targets(self, __cmd):
-        global _exit_flag
-        global _all_connections
-        global _all_address
-        global _num_connections
-
-        self.__target = __cmd.replace('select', '')
-        self.__target = int(self.get_id_connection_target())
-        _exit_flag = False
-
-        try:
-            self.__conn = _all_connections[self.__target]
-        except Exception as Error:
-            print(Error)
-            return
-
-        self.__target_selected = color.color("yellow", "[!] ") + color.color("red",
-                                                                             "The connection to the target has been lost: ") + color.color(
-            "yellow", _all_address[self.__target][0])
-        print(color.color("green", "[ info ] ") + color.color("cyan", "Select Target:") + color.color("yellow",
-                                                                                                      _all_address[
-                                                                                                          self.__target][
-                                                                                                          0]))
-
-        self.__thread = threading.Thread(target=self.transfer, args=(self.__conn,))
-        self.__thread.start()
-
-        try:
-            while True:
-                self.__command = input()
-                if self.__command == "exit":
-                    _exit_flag = True
-                    self.__conn.send(str.encode("\n"))
-                    break
-                _exit_flag = False
-                self.__conn.send(str.encode(self.__command + "\n"))
-        except:
-            _exit_flag = False
-            print(self.__target_selected)
-
-        sleep(0.125)
-
-    def remove_node(self, __socked_fd):
-        global _all_connections
-        global _all_address
-        global _all_info
-        for __i, __conn in enumerate(_all_connections):
-            if __socked_fd == _all_connections[__i]:
-                del _all_connections[__i]
-                del _all_address[__i]
-                del _all_info[__i]
-                __conn.close()
-                break
         return
 
     def create_jobs(self):
@@ -331,59 +349,45 @@ class Thot:
             self.__queue.put(__x)
         self.__queue.join()
 
-    def list_connections(self):
-        global _all_connections
-        global _type_connection
-        global _all_address
-        global _all_info
-        global _connections_name
+    def get_targets(self, __cmd):
+        global _exit_flag
+        global _pool_connections
+        _exit_flag = False
+
+        self.__target = __cmd.replace('select', '')
 
         try:
-            self.__result = [[color.color('yellow', 'ID'), color.color('yellow', 'TYPE'), color.color('yellow', 'HOST'),
-                              color.color('yellow', 'PORT'), color.color('yellow', 'DESCRIPTION CONNECTION')]]
+            for __key, __connection in _pool_connections.items():
+                if str(__key.strip().lower()) == str(self.__target.strip().lower()):
+                    self.__connection_get_target = _pool_connections[__key]["socket"]
+                    self.__connection_id_get_target = __key
 
-            for __i, __conn in enumerate(_all_connections):
-                try:
-                    self.__theConnection = _type_connection[__i]
-                except:
-                    _type_connection.append("unknown")
-
-                self.__result.append(
-                    [color.color("green_ptrl", str(_connections_name[__i])), color.color("lgray", str(_type_connection[__i])),
-                     color.color("green", str(_all_address[__i][0])), color.color("green", str(_all_address[__i][1])),
-                     str(_all_info[__i])])
-
-                if len(self.__result) == 1:
-                    self.__result.append([color.color('red', 'NOT CONNECTIONS'), color.color('red', 'CONNECTIONS'),
-                                          color.color('red', 'CONNECTIONS'),color.color('red', 'NOT CONNECTIONS')])
+                    self.__target_selected = color.color("yellow", "[!] ") + color.color("red",
+                                                                                         "The connection to the target has been lost: ") + color.color(
+                        "yellow", _pool_connections[__key]['ip_remote'])
+                    print(color.color("green", "[ info ] ") + color.color("cyan", "Select Target:") + color.color(
+                        "yellow", _pool_connections[__key]['ip_remote']))
         except Exception as Error:
-            print(Error)
-            self.__result.append([color.color('red', 'NOT CONNECTIONS'), color.color('red', 'CONNECTIONS'),
-                                  color.color('red', 'CONNECTIONS'),color.color('red', 'NOT CONNECTIONS')])
+            pass
 
-        print('\n')
-        print(tabulate(self.__result, headers='firstrow', tablefmt='simple', stralign='center'))
+        self.__thread_get_target = threading.Thread(target=self.transfer, args=(
+        self.__connection_id_get_target, self.__connection_get_target,))
+        self.__thread_get_target.start()
 
-    def search_bind(self):
-        self.__thread = threading.Thread(target=self.connect_bind_tcp, args=())
-        self.__thread.daemon = True
-        self.__thread.start()
+        try:
+            while True:
+                self.__command = input()
+                if self.__command == "exit":
+                    _exit_flag = True
+                    self.__connection_get_target.send(str.encode('\n'))
+                    break
+                _exit_flag = False
+                self.__connection_get_target.send(str.encode(self.__command + "\n"))
+        except:
+            _exit_flag = False
+            print(self.__target_selected)
 
-    def connect_bind_tcp(self):
-        self.__cont_connect_bind_tcp = 1
-        while self.__connection_retry_bind > self.__cont_connect_bind_tcp:
-            try:
-                self.__sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.__sock.connect((self.__address, int(self.__port)))
-                self.accept_connections_bind(self.__sock, [self.__address, self.__port])
-                return True
-            except socket.error as Error:
-                print_message.execution_info(
-                    "Trying {} to connect with {}:{}".format(self.__cont_connect_bind_tcp, self.__address, self.__port))
-            sleep(1)
-            self.__cont_connect_bind_tcp += 1
-
-        return True
+        sleep(0.125)
 
     def console(self, __session, __path):
         global _exit_flag
