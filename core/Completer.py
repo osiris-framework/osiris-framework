@@ -39,24 +39,25 @@ def completer():
         ["clean", "exit", "banner", "exec", "restart", "upgrade", 'search', 'help', "sessions", "select",
          "reload_modules",
          ### start
-         "use auxiliary/gather/oracle/weblogic/weblogic_detect",
-         "use auxiliary/gather/http/netscaler_cookie_decrypt",
-         "use auxiliary/gather/http/method_enable",
-         "use auxiliary/gather/http/server_name",
-         "use auxiliary/gather/http/http_security_headers_check",
-         "use auxiliary/gather/http/ip_gather",
-         "use auxiliary/scanner/ftp/ftp_anonymous",
-         "use auxiliary/scanner/ftp/ftp_bruteforce",
-         "use auxiliary/scanner/ftp/ftp_version",
-         "use auxiliary/scanner/rdp/cve-2019-0708-bluekeep-scan",
-         "use auxiliary/scanner/ssh/ssh_bruteforce",
-         "use auxiliary/scanner/ssh/ssh_version",
-         "use auxiliary/scanner/http/robots_txt",
-         "use auxiliary/scanner/http/ssl_info",
-         "use auxiliary/scanner/smb/smb_version",
-         "use auxiliary/scanner/smb/smb_ms17_010",
-         "use exploits/multi/handler"
-         ### end
+                                            "use auxiliary/gather/oracle/weblogic/weblogic_detect",
+                            "use auxiliary/gather/http/netscaler_cookie_decrypt",
+                            "use auxiliary/gather/http/method_enable",
+                            "use auxiliary/gather/http/server_name",
+                            "use auxiliary/gather/http/krakedin",
+                            "use auxiliary/gather/http/http_security_headers_check",
+                            "use auxiliary/gather/http/ip_gather",
+                            "use auxiliary/scanner/ftp/ftp_anonymous",
+                            "use auxiliary/scanner/ftp/ftp_bruteforce",
+                            "use auxiliary/scanner/ftp/ftp_version",
+                            "use auxiliary/scanner/rdp/cve-2019-0708-bluekeep-scan",
+                            "use auxiliary/scanner/ssh/ssh_bruteforce",
+                            "use auxiliary/scanner/ssh/ssh_version",
+                            "use auxiliary/scanner/http/robots_txt",
+                            "use auxiliary/scanner/http/ssl_info",
+                            "use auxiliary/scanner/smb/smb_version",
+                            "use auxiliary/scanner/smb/smb_ms17_010",
+                            "use exploits/multi/handler"
+                                        ### end
          ])
     readline.set_completer_delims('\t')
     readline.parse_and_bind("tab: complete")
