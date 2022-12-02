@@ -40,6 +40,7 @@ def completer():
          "reload_modules",
          ### start
                                             "use auxiliary/gather/oracle/weblogic/weblogic_detect",
+                            "use auxiliary/gather/http/excalibur",
                             "use auxiliary/gather/http/netscaler_cookie_decrypt",
                             "use auxiliary/gather/http/method_enable",
                             "use auxiliary/gather/http/server_name",
