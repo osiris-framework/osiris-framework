@@ -40,7 +40,6 @@ class Interpreter(object):
         from utilities.Files import files
 
         self.__cant_modules = files.count_sub_folder_files('modules')
-
         self.__unfiltered_result = []
         self.__result = []
 
@@ -58,16 +57,15 @@ class Interpreter(object):
             self.__result.append(filter_result.split('.')[0])
 
         try:
-            for i in range(int(self.__cant_modules)):
+            for i in range(0, int(len(self.__result))):
                 for root, dirs, files in walk('modules'):
-                    if query in root + self.__result[i]:
+                    if query in root + '/' + self.__result[i]:
                         if self.__result[i] + '.py' in files:
                             self.__thePath = path.join(root, self.__result[i] + '.py')
                             self.__thePath = self.__thePath.split('/')
                             self.__pathFirstIndex = self.__thePath[0]
                             self.__thePath.remove(self.__pathFirstIndex)
                             self.__thePath = '/'.join(self.__thePath)
-                            print(self.__thePath)
                             if obtainer.description_obtainer(self.__thePath.split('.py')[0]):
                                 self.__search_module.append(
                                     [self.__thePath.split('.py')[0], obtainer.info['description']])

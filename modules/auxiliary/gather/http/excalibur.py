@@ -15,10 +15,8 @@ from utilities.Tools import tools
 from PyPDF2 import PdfReader
 import docx2txt
 from exiftool import ExifToolHelper
-import shutil
-from tqdm import tqdm
+import random
 from bs4 import BeautifulSoup
-from pathlib import Path
 
 print_message.name_module = __file__
 
@@ -34,7 +32,7 @@ info = {
 }
 options = {
     'rhost': ['Yes', 'Set target to attack', ''],
-    'rport': ['No', 'Set port to attack', ''],
+    'rport': ['No', 'Set port to attack: i.e :8080', ''],
     'file_extensions': ['No', 'Set extensions to download and analyze', '.xls,.pdf,.xlsx,.docx,.doc,.txt'],
     'webpath': ['No', 'Set webpath where is the directory listing', '/'],
     'results': ['No', 'Save data in a folder', tools.temp_dir()['message'] + '/excalibur_results/']
@@ -45,21 +43,35 @@ required = {
     'check_required': 'False'
 }
 
-find_words_files = ["password", "clave", "contraseña", "contraseñas", "claves", "passwords", "username", "usuario"]
+find_words_files = ["password", "clave", "contraseña", "contraseñas", "claves", "passwords", "username", "usuario",
+                    "key", "token"
+                           "oauth", "serialid", "serial", "tokens", "usernames"]
 
 session = requests.Session()
 
 
-def onlyPDF():
-    reader = PdfReader("test.docx")
+def generate_random_chars(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
+def extract_images_docx(filename, _results_folder):
+    extracted_images_result = _results_folder + 'extracted_images/'
+    if not os.path.exists(extracted_images_result):
+        os.makedirs(extracted_images_result)
+
+    docx2txt.process(filename, extracted_images_result)
+
+
+def extract_images_pdf(filename, _results_folder):
+    extracted_images_result = _results_folder + 'extracted_images/'
+    if not os.path.exists(extracted_images_result):
+        os.makedirs(extracted_images_result)
+
+    reader = PdfReader(filename)
     for page in reader.pages:
         for image in page.images:
-            with open(image.name, "wb") as fp:
+            with open(extracted_images_result + generate_random_chars() + image.name, "wb") as fp:
                 fp.write(image.data)
-
-
-def onlyDOCX():
-    text = docx2txt.process("test.docx", "/tmp/consultor")
 
 
 def get_metadata(filename):
@@ -109,6 +121,7 @@ def find_words(text, search):
 def _get_recursive_links(base, _results_folder):
     f = requests.get(base)
     soup = BeautifulSoup(f.text)
+    temp_results_folder = _results_folder
     for anchor in soup.find_all('a'):
         href = anchor.get('href')
         if href.startswith('/'):
@@ -119,18 +132,23 @@ def _get_recursive_links(base, _results_folder):
         else:
             try:
                 url_extract_filename = base + href
-                filename = _results_folder + href
                 print(color.color("green", "[*] File found: -> " + href))
                 print(color.color("green", "[*] Downloading the file found: -> [" + base + href + "]"))
                 if tools.download_files_by_url(base + href, _results_folder + href)['code'] == 200:
+                    filename = _results_folder + href
                     print(color.color("green", "[*] Get metadata of the file -> [" + base + href + "]"))
                     get_metadata(filename)
+                    print(color.color("green", "[*] Get images of the file -> [" + base + href + "]"))
+                    if filename.endswith('.pdf'):
+                        extract_images_pdf(filename, temp_results_folder)
+                    if filename.endswith('.docx'):
+                        extract_images_docx(filename, temp_results_folder)
                     strings_ = list(strings(filename))
                     for find_text in find_words_files:
                         match = find_words("".join(str(x) for x in strings_), find_text)
                         if match:
                             print(color.color("cyan", "[+] Interesting file found: -> " + str(filename)))
-                            interesting_files = open('interesting_files.txt', 'a+')
+                            interesting_files = open(temp_results_folder + '/interesting_files.txt', 'a+')
                             interesting_files.write('\n' + str(filename))
 
             except Exception as inst:
