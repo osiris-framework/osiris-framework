@@ -36,7 +36,7 @@ def completer():
     t = tabCompleter()
     # tool command
     t.createListCompleter(
-        ["clean", "exit", "banner", "exec", "restart", "upgrade", 'search', 'help', "sessions", "select",
+        ["clean", "exit", "banner", "exec", "restart", "upgrade", 'search', 'help', "sessions", "select", "back", "generator_list"
          "reload_modules",
          ### start
                                             "use auxiliary/gather/oracle/weblogic/weblogic_detect",

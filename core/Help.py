@@ -28,8 +28,8 @@ class Help(object):
                                        [color.color('green', 'exec'), 'run an operating system command'],
                                        [color.color('green', 'back'), 'goes to a section back'],
                                        [color.color('green', 'upgrade'), 'Check for a new osiris update'],
-                                       [color.color('green', 'reload_modules'),
-                                        'Performs an update of the module database in osiris']
+                                       [color.color('green', 'reload_modules'),'Performs an update of the module database in osiris'],
+                                       [color.color('green', 'generator_list'),'Displays the list of payloads available to generate from osiris']
                                        ]
         print('\n')
         print(color.color('yellow', '\t\t\t\t\tCORE COMMANDS'))

@@ -275,7 +275,7 @@ class TemplateGenerator:
                                                                                                               str(Error))
         return self.__status
 
-    def python3_windows(self):
+    def Python3_windows(self):
         """
             Description: This payload support GNU/Linux and Mac OSX
         """

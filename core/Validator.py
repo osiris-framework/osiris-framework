@@ -13,6 +13,7 @@ from importlib import reload
 from os import system
 from core.ModuleObtainer import obtainer
 from core.Help import help
+from core.generator.Help import help_generator
 from core.Interpreter import interpreter
 from utilities.Files import update_modules
 from core.Processor import processor
@@ -40,6 +41,8 @@ class Validator(object):
                     pass
             elif self.__command[0].lower() == 'banner':
                 banner.banner_welcome()
+            elif self.__command[0].lower() == 'generator_list':
+                help_generator.help_generator()
             elif self.__command[0].lower() == 'exit' or self.__command[0].lower() == 'close' or self.__command[
                 0].lower() == 'quit':
                 processor.kill_connections()
@@ -96,6 +99,8 @@ class Validator(object):
                 ScreenCleaner()
             elif self.__command[0].lower() == "banner":
                 banner.banner_welcome()
+            elif self.__command[0].lower() == 'generator_list':
+                help_generator.help_generator()
             elif self.__command[0].lower() == 'search':
                 try:
                     interpreter.search_module(query=self.__command[1])
