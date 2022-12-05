@@ -29,11 +29,13 @@ class Help(object):
                                        [color.color('green', 'back'), 'goes to a section back'],
                                        [color.color('green', 'upgrade'), 'Check for a new osiris update'],
                                        [color.color('green', 'reload_modules'),'Performs an update of the module database in osiris'],
-                                       [color.color('green', 'generator_list'),'Displays the list of payloads available to generate from osiris']
+                                       [color.color('green', 'generator'),'Generates payloads via arguments from the osiris framework base console'],
+                                       [color.color('green', 'generator list'),'Displays the list of payloads available to generate from osiris'],
+                                       [color.color('green', 'generator help'),'Show help about payload generator class']
                                        ]
         print('\n')
         print(color.color('yellow', '\t\t\t\t\tCORE COMMANDS'))
-        print(tabulate(self.__core_commands_osiris, headers='firstrow', tablefmt='grid', stralign='center'))
+        print(tabulate(self.__core_commands_osiris, headers='firstrow', tablefmt='simple', stralign='Left'))
 
     def show_payloads_osiris(self):
         self.__show_payloads = [[color.color('yellow', 'payloads'), color.color('yellow', 'description')],
