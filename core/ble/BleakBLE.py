@@ -17,7 +17,6 @@ class BleakBLE:
         self.__descriptors = []
         self.__value = None
         self.__device = None
-        self.__request_device = None
         self.__status = {}
         self.__devices = {}
 
@@ -37,6 +36,10 @@ class BleakBLE:
 
     async def get_services(self, device_address):
         try:
+            self.__characteristics = {}
+            self.__services = {}
+            self.__characteristics_discover = []
+            self.__descriptors = []
             self.__device = await BleakScanner.find_device_by_address(device_address)
 
             if self.__devices is not None:

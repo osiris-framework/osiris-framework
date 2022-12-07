@@ -43,6 +43,9 @@ def print_scan_devices(device_list):
                 [color.color("green", values[0]), color.color("lgray", values[1]), color.color("cyan", values[2])])
     print(tabulate(__print_devices, headers='firstrow', tablefmt='simple', stralign='Left'))
 
+    __print_devices = [[color.color('yellow', 'Device Name'), color.color('yellow', 'RSSI'),
+                        color.color('yellow', 'Device Address')]]
+
 
 def exploit():
     print_message.start_execution()
