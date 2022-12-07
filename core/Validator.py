@@ -109,8 +109,6 @@ class Validator(object):
                 ScreenCleaner()
             elif self.__command[0].lower() == "banner":
                 banner.banner_welcome()
-            elif self.__command[0].lower() == 'generator_list':
-                help_generator.help_generator()
             elif self.__command[0].lower() == 'search':
                 try:
                     interpreter.search_module(query=self.__command[1])
