@@ -41,6 +41,7 @@ def completer():
          ### start
                                             "use auxiliary/gather/ble/characteristics",
                             "use auxiliary/gather/ble/discover",
+                            "use auxiliary/gather/ble/read",
                             "use auxiliary/gather/oracle/weblogic/weblogic_detect",
                             "use auxiliary/gather/http/excalibur",
                             "use auxiliary/gather/http/netscaler_cookie_decrypt",

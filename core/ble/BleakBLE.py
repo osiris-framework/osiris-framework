@@ -7,10 +7,15 @@
 import asyncio
 from bleak import BleakScanner, BleakClient
 from utilities.Colors import color
+from utilities.Messages import print_message
+
+print_message.name_module = __file__
 
 
 class BleakBLE:
     def __init__(self):
+        self.__value_return = None
+        self.__address = None
         self.__characteristics = {}
         self.__services = {}
         self.__characteristics_discover = []
@@ -19,6 +24,7 @@ class BleakBLE:
         self.__device = None
         self.__status = {}
         self.__devices = {}
+        self.__device_found = None
 
     async def scan_devices(self, timeout):
         try:
@@ -51,7 +57,7 @@ class BleakBLE:
                                 try:
                                     self.__value = await client.read_gatt_char(characteristics.uuid)
                                     self.__characteristics_discover.append(",".join(characteristics.properties))
-                                    self.__characteristics_discover.append(self.__value)
+                                    self.__characteristics_discover.append(self.__value.hex())
                                     self.__characteristics_discover.append(characteristics.description)
                                 except Exception as Error:
                                     self.__characteristics_discover.append(characteristics.properties)
@@ -67,7 +73,7 @@ class BleakBLE:
                                 try:
                                     self.__value = await client.read_gatt_descriptor(descriptor.handle)
                                     self.__descriptors.append(descriptor.uuid)
-                                    self.__descriptors.append({descriptor.description: self.__value})
+                                    self.__descriptors.append({descriptor.description: self.__value.hex()})
                                 except Exception as Error:
                                     self.__descriptors.append(descriptor.uuid)
                                     self.__descriptors.append({descriptor.description: Error})
@@ -98,6 +104,31 @@ class BleakBLE:
             self.__status['message'] = Error.args[0]
 
             return self.__status
+
+    async def read_service(self, __device_name_or_address, __characteristic, __timeout=5):
+        self.__devices = await BleakScanner.discover(timeout=__timeout)
+        for __device in self.__devices:
+            if __device.name == __device_name_or_address or __device.address == __device_name_or_address:
+                self.__device_found = __device
+                print_message.execution_info("Device {} Found".format(self.__device_found.name))
+                break
+        try:
+            self.__address = self.__device_found.address
+
+            async with BleakClient(self.__address) as client:
+                self.__value_return = await client.read_gatt_char(__characteristic)
+                self.__status['code'] = 200
+                self.__status['message'] = [self.__device_found.name, self.__device_found.address, self.__value_return.hex()]
+
+        except Exception as Error:
+            self.__status['code'] = 500
+            self.__status['message'] = Error.args[0]
+
+        if self.__device_found is None:
+            self.__status['code'] = 500
+            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray", "Error querying data with the information provided")
+
+        return self.__status
 
 
 bleakBLE = BleakBLE()

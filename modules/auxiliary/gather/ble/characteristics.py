@@ -36,7 +36,7 @@ required = {
 def print_descriptor_devices(device_information):
     __print_devices = [[color.color('yellow', 'Service'), color.color('yellow', 'Characteristic'),
                         color.color('yellow', 'Descriptor'), color.color('yellow', 'Descriptor Values'),
-                        color.color('yellow', 'Values'),
+                        color.color('yellow', 'Values in HEX'),
                         color.color('yellow', 'Property'), color.color('yellow', 'Service Description')]]
     if device_information['code'] == 200:
         for service, service_values in device_information['message'].items():
