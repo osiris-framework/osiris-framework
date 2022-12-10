@@ -14,6 +14,7 @@ print_message.name_module = __file__
 
 class BleakBLE:
     def __init__(self):
+        self.__ret_write_value = None
         self.__value_return = None
         self.__address = None
         self.__characteristics = {}
@@ -39,6 +40,9 @@ class BleakBLE:
             self.__status['message'] = self.__devices
 
         return self.__status
+
+    async def _notification_handler(self, sender, data):
+        print(color.color("yellow", "Response: " ) +  color.color("cyan", ', '.join('{:02x}'.format(x) for x in data)))
 
     async def get_services(self, device_address):
         try:
@@ -106,6 +110,7 @@ class BleakBLE:
             return self.__status
 
     async def read_service(self, __device_name_or_address, __characteristic, __timeout=5):
+        self.__device_found = None
         self.__devices = await BleakScanner.discover(timeout=__timeout)
         for __device in self.__devices:
             if __device.name == __device_name_or_address or __device.address == __device_name_or_address:
@@ -118,7 +123,8 @@ class BleakBLE:
             async with BleakClient(self.__address) as client:
                 self.__value_return = await client.read_gatt_char(__characteristic)
                 self.__status['code'] = 200
-                self.__status['message'] = [self.__device_found.name, self.__device_found.address, self.__value_return.hex()]
+                self.__status['message'] = [self.__device_found.name, self.__device_found.address,
+                                            self.__value_return.hex()]
 
         except Exception as Error:
             self.__status['code'] = 500
@@ -126,7 +132,91 @@ class BleakBLE:
 
         if self.__device_found is None:
             self.__status['code'] = 500
-            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray", "Error querying data with the information provided")
+            self.__status['message'] = color.color("red", "[-] ") + color.color("lgray",
+                                                                                "Error querying data with the information provided")
+
+        return self.__status
+
+    async def write_service(self, __device_name_or_address, __characteristic, __data, __timeout=5):
+        self.__device_found = None
+        self.__devices = await BleakScanner.discover(timeout=__timeout)
+
+        for __device in self.__devices:
+            if __device.name == __device_name_or_address or __device.address == __device_name_or_address:
+                self.__device_found = __device
+                print_message.execution_info("Device {} Found".format(self.__device_found.name))
+                break
+
+        try:
+            self.__address = self.__device_found.address
+
+            async with BleakClient(self.__address) as client:
+                try:
+                    self.__ret_write_value = await client.write_gatt_char(__characteristic, bytes.fromhex(__data), True)
+                    await asyncio.sleep(3)
+                    self.__status['code'] = 200
+                    self.__status['message'] = color.color("green", "[+] ") + color.color("yellow",
+                                                                                          "Device Address: ") + color.color(
+                        "lgray", self.__device_found.address) + color.color("yellow",
+                                                                            " Characteristic: ") + color.color("lgray",
+                                                                                                               __characteristic) + color.color(
+                        "yellow", " Data ") + color.color("cyan", "{}".format(__data)) + color.color("lgray",
+                                                                                                     " sent correctly")
+                except Exception as Error:
+                    self.__status['code'] = 500
+                    self.__status['message'] = Error.args[0]
+        except Exception as Error:
+            self.__status['code'] = 500
+            self.__status['message'] = Error.args[0]
+
+        if self.__device_found is None:
+            self.__status['code'] = 500
+            self.__status['message'] = color.color("lgray",
+                                                   "Error querying data with the information provided or device ") + color.color(
+                "yellow", __device_name_or_address) + color.color("lgray", " not found")
+
+        return self.__status
+
+    async def write_service_notify(self, __device_name_or_address, __characteristic, __characteristic_notify, __data,
+                                   __timeout=5):
+        self.__device_found = None
+        self.__devices = await BleakScanner.discover(timeout=__timeout)
+
+        for __device in self.__devices:
+            if __device.name == __device_name_or_address or __device.address == __device_name_or_address:
+                self.__device_found = __device
+                print_message.execution_info("Device {} Found".format(self.__device_found.name))
+                break
+
+        try:
+            self.__address = self.__device_found.address
+
+            async with BleakClient(self.__address) as client:
+                try:
+                    await client.start_notify(__characteristic_notify, self._notification_handler)
+                    self.__ret_write_value = await client.write_gatt_char(__characteristic, bytes.fromhex(__data), True)
+                    await asyncio.sleep(7)
+                    await client.stop_notify(__characteristic_notify)
+                    self.__status['code'] = 200
+                    self.__status['message'] = color.color("green", "[+] ") + color.color("yellow",
+                                                                                          "Device Address: ") + color.color(
+                        "lgray", self.__device_found.address) + color.color("yellow",
+                                                                            " Characteristic: ") + color.color("lgray",
+                                                                                                               __characteristic) + color.color(
+                        "yellow", " Data ") + color.color("cyan", "{}".format(__data)) + color.color("lgray",
+                                                                                                     " sent correctly")
+                except Exception as Error:
+                    self.__status['code'] = 500
+                    self.__status['message'] = Error.args[0]
+        except Exception as Error:
+            self.__status['code'] = 500
+            self.__status['message'] = Error.args[0]
+
+        if self.__device_found is None:
+            self.__status['code'] = 500
+            self.__status['message'] = color.color("lgray",
+                                                   "Error querying data with the information provided or device ") + color.color(
+                "yellow", __device_name_or_address) + color.color("lgray", " not found")
 
         return self.__status
 

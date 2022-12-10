@@ -40,7 +40,9 @@ def completer():
          "reload_modules", "generator(TemplateGenerator, target=, port=, platform=, type=, payload=)",
          ### start
                                             "use auxiliary/gather/ble/characteristics",
+                            "use auxiliary/gather/ble/write",
                             "use auxiliary/gather/ble/discover",
+                            "use auxiliary/gather/ble/write_notify",
                             "use auxiliary/gather/ble/read",
                             "use auxiliary/gather/oracle/weblogic/weblogic_detect",
                             "use auxiliary/gather/http/excalibur",
