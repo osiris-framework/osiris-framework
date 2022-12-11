@@ -11,7 +11,7 @@ from queue import Queue
 from time import sleep
 from datetime import datetime
 from utilities.Colors import color
-from core.thot.ThotCompleter import thot_completer
+from core.thot.ThotCompleter import thot_completer, add_new_session
 from core.thot.Help import help
 from utilities.ScreenCleaner import ScreenCleaner
 from tabulate import tabulate
@@ -28,6 +28,8 @@ _count_connections = 1
 
 class Thot:
     def __init__(self, __user_connection, __type_connection):
+        self.__remove_connection = None
+        self.__new_session = None
         self.__threads_create_worker = None
         self.__user = None
         self.__command = None
@@ -67,7 +69,6 @@ class Thot:
         self.__number_threads = 2
         self.__jobs_number = [1, 2]
         self.__connection_retry_bind = 7
-
         self.__length_id_name = 6
 
     def socket_create(self, __host, __port):
@@ -130,18 +131,21 @@ class Thot:
                         "red", str(self.__time_of_connection[1])) + color.color("lgray", str(")"))
                 }
 
-                print(color.color("green", "[ info ] ") + color.color("lgray", "THOT interactive session ") + color.color(
-                    "yellow", str(_count_connections)) + color.color("lgray", " opened (") + color.color("yellow",
-                                                                                                         self.__address_accept_connections) + color.color(
-                    "red", ":") + color.color("yellow", str(self.__port_accept_connections)) + color.color("red",
-                                                                                                           str(" -> ")) + color.color(
-                    "yellow", str(
-                        self.__address_init_connection)) + color.color("red", str(":")) + color.color("yellow", str(
-                    self.__port_init_connection)) + str(" ") + color.color("lgray",
-                                                                           str(self.__time_of_connection[0])) + color.color(
-                    "red", str(self.__time_of_connection[1])) + color.color("lgray", str(")")))
+                print(
+                    color.color("green", "[ info ] ") + color.color("lgray", "THOT interactive session ") + color.color(
+                        "yellow", str(_count_connections)) + color.color("lgray", " opened (") + color.color("yellow",
+                                                                                                             self.__address_accept_connections) + color.color(
+                        "red", ":") + color.color("yellow", str(self.__port_accept_connections)) + color.color("red",
+                                                                                                               str(" -> ")) + color.color(
+                        "yellow", str(
+                            self.__address_init_connection)) + color.color("red", str(":")) + color.color("yellow", str(
+                        self.__port_init_connection)) + str(" ") + color.color("lgray",
+                                                                               str(self.__time_of_connection[
+                                                                                       0])) + color.color(
+                        "red", str(self.__time_of_connection[1])) + color.color("lgray", str(")")))
 
                 _count_connections += 1
+                add_new_session([key for key in _pool_connections.keys()])
             except Exception as Error:
                 print_message.execution_error("There was an error connecting to the remote host {}:{} Error {}".format(
                     self.__address_accept_connections, self.__port_accept_connections, Error))
@@ -186,6 +190,7 @@ class Thot:
                 "red", str(self.__time_of_connection[1])) + color.color("lgray", str(")")))
 
             _count_connections += 1
+            add_new_session([key for key in _pool_connections.keys()])
         except Exception as Error:
             print_message.execution_error("There was an error connecting to the remote host {}:{} Error {}".format(
                 self.__address_accept_connections_bind, self.__port_accept_connections_bind, Error))
@@ -246,6 +251,7 @@ class Thot:
         print('\n')
         print(tabulate(self.__result_list_connections, headers='firstrow', tablefmt='simple', stralign='center'))
 
+
     def kill_all_connections(self, signal=None, frame=None):
         global _pool_connections
 
@@ -304,13 +310,14 @@ class Thot:
                 if str(__key.strip().lower()) == str(__id_connection.strip().lower()):
                     try:
                         _pool_connections[__key]["socket"].close()
-                    except:
+                    except Exception as Error:
                         pass
                     del _pool_connections[__key]
                     break
         except Exception as Error:
             pass
 
+        add_new_session([key for key in _pool_connections.keys()])
         return
 
     def transfer(self, __id_connection, __connection):
@@ -340,7 +347,10 @@ class Thot:
                 self.remove_client_connection(self.__id_connection_transfer)
                 _exit_flag = False
 
-            sys.stdout.write(color.color("lgray", self.__buffer.decode('utf-8')))
+            try:
+                sys.stdout.write(color.color("lgray", self.__buffer.decode('utf-8')))
+            except KeyboardInterrupt:
+                print_message.execution_error("Target {} Lost".format(self.__id_connection_transfer))
 
         return
 
@@ -371,7 +381,7 @@ class Thot:
             pass
 
         self.__thread_get_target = threading.Thread(target=self.transfer, args=(
-        self.__connection_id_get_target, self.__connection_get_target,))
+            self.__connection_id_get_target, self.__connection_get_target,))
         self.__thread_get_target.start()
 
         try:
@@ -391,6 +401,7 @@ class Thot:
 
     def console(self, __session, __path):
         global _exit_flag
+
         thot_completer()
         _exit_flag = False
 
@@ -407,8 +418,17 @@ class Thot:
 
             if self.__command == "sessions":
                 self.list_connections()
-            elif 'select' in self.__command:
+            elif "select" in self.__command:
                 self.get_targets(self.__command)
+            elif "kill" in self.__command:
+                try:
+                    self.__remove_connection = self.__command.split(" ")[1]
+                    for key in _pool_connections.keys():
+                        if str(key.strip().lower()) == str(self.__remove_connection.strip().lower()):
+                            print_message.execution_info("killing connection {} please wait.".format(key))
+                            self.remove_client_connection(key)
+                except Exception as Error:
+                    continue
             elif self.__command == "":
                 continue
             elif self.__command == "background" or self.__command == "exit":
@@ -444,3 +464,5 @@ class Thot:
                     print_message.execution_info("Please Enter command")
             else:
                 print_message.execution_error("Command not found")
+
+

@@ -117,8 +117,7 @@ class Validator(object):
                                                                   " Invalid syntax must enter the search query!"))
                 except TypeError:
                     pass
-            elif self.__command[0].lower() == 'exit' or self.__command[0].lower() == 'close' or self.__command[
-                0].lower() == "back":
+            elif self.__command[0].lower() == 'exit' or self.__command[0].lower() == 'close' or self.__command[0].lower() == "back":
                 import core.Interpreter
                 from core.Completer import completer  # import completer
                 reload(core.Interpreter)

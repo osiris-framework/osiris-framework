@@ -38,10 +38,14 @@ def print_scan_devices(device_list):
                         color.color('yellow', 'Device Address')]]
     if device_list['code'] == 200:
 
-        for key, values in device_list['message'].items():
-            __print_devices.append(
-                [color.color("green", values[0]), color.color("lgray", values[1]), color.color("cyan", values[2])])
-    print(tabulate(__print_devices, headers='firstrow', tablefmt='simple', stralign='Left'))
+        try:
+            for key, values in device_list['message'].items():
+                __print_devices.append([color.color("green", values[0]), color.color("lgray", values[1]), color.color("cyan", values[2])])
+        except:
+            print_message.execution_error("an error has occurred, please try again")
+
+        print(tabulate(__print_devices, headers='firstrow', tablefmt='simple', stralign='Left'))
+
 
     __print_devices = [[color.color('yellow', 'Device Name'), color.color('yellow', 'RSSI'),
                         color.color('yellow', 'Device Address')]]

@@ -73,9 +73,9 @@ class Processor():
             print('\n')
             print(tabulate(self.___result_connection, headers='firstrow', tablefmt='simple', stralign='center'))
 
-    def get_console(self, __sesion, __path):
+    def get_console(self, __session, __path):
         try:
-            self.__connection.console(__sesion, __path)
+            self.__connection.console(__session, __path)
         except:
             print(color.color("red", "[-] ") + color.color("c", "Error there are no active connections to select"))
 
