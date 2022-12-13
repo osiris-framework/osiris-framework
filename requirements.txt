@@ -12,3 +12,9 @@ PyPDF2
 docx2txt
 pyexiftool
 Pillow
+requests_html
+lxml
+pandas
+openpyxl
+aiohttp
+selenium
