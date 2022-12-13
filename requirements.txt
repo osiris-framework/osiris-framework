@@ -12,5 +12,11 @@ PyPDF2~=2.11.2
 docx2txt~=0.8
 pyexiftool
 Pillow
+requests_html
+lxml
+pandas
+openpyxl
+aiohttp
+selenium
 bleak~=0.19.5
 beautifulsoup4~=4.11.1
