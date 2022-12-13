@@ -10,12 +10,16 @@ from importlib import reload
 from utilities.Colors import color
 from tabulate import tabulate
 
+
 class ModuleObtainer(object):
     """
         Description: Class in charge of loading all the module logic when the use command is used.
     """
 
     def __init__(self):
+        self.__payload_path = None
+        self.__payload_name = None
+        self.__type = None
         self.__option_message_payload = None
         self.__path_payload = None
         self.__payload = None
@@ -42,7 +46,8 @@ class ModuleObtainer(object):
             self.__module_path = '/'.join(self.__module_path)
             path.append(self.__module_path)
         except IndexError:
-            print(color.color("red", "[-] ") + color.color("lgray", "The Module {} ".format(color.color("cafe", self.__module)) + color.color("lgray", " not found")))
+            print(color.color("red", "[-] ") + color.color("lgray", "The Module {} ".format(
+                color.color("cafe", self.__module)) + color.color("lgray", " not found")))
             return False
 
         try:
@@ -58,7 +63,8 @@ class ModuleObtainer(object):
 
             try:
                 self.__path_payloads = 'modules/payloads/' + self.options['payload'][2]
-                self.options_payload = getattr(__import__(self.__path_payloads.replace("/","."), fromlist=['options_payload']), 'options_payload')
+                self.options_payload = getattr(
+                    __import__(self.__path_payloads.replace("/", "."), fromlist=['options_payload']), 'options_payload')
             except:
                 pass
             self.info = getattr(__import__(self.__module_name, fromlist=['info']), 'info')
@@ -67,7 +73,9 @@ class ModuleObtainer(object):
             if self.required['check_required'] == True or self.required['check_required'].lower() == "true":
                 self.check = getattr(__import__(self.__module_name, fromlist=['check']), 'check')
         except AttributeError:
-            print(color.color("red", "[-] ") + color.color("lgray", "Your module {}".format(color.color("cafe", self.__module_name)) + color.color("lgray", " must meet the base template requirements.")))
+            print(color.color("red", "[-] ") + color.color("lgray", "Your module {}".format(
+                color.color("cafe", self.__module_name)) + color.color("lgray",
+                                                                       " must meet the base template requirements.")))
             return False
 
         except ImportError as Error:
@@ -80,13 +88,30 @@ class ModuleObtainer(object):
     def description_obtainer(self, module):
         try:
             self.__module = str(module)
-            self.__category  = self.__module.split('/')[0]
+            self.__category = self.__module.split('/')[0]
             self.__module_name = self.__module.split('/')[-1]
             self.__module_path = str(getcwd() + '/modules/{}.py'.format(self.__module)).split('/')
             self.__module_path.remove(self.__module_name + '.py')
             self.__module_path = '/'.join(self.__module_path)
             path.append(self.__module_path)
             self.info = getattr(__import__(self.__module_name, fromlist=['info']), 'info')
+        except Exception as Error:
+            print(Error)
+            return False
+        else:
+            return True
+
+    def description_obtainer_payload(self, payload):
+        try:
+            self.__payload = str(payload)
+            self.__category = self.__payload.split('/')[0]
+            self.__type = self.__payload.split('/')[-2]
+            self.__payload_name = self.__payload.split('/')[-1]
+            self.__payload_path = str(getcwd() + '/modules/{}.py'.format(self.__payload)).split('/')
+            self.__payload_path.remove(self.__payload_name + '.py')
+            self.__payload_path = '/'.join(self.__payload_path)
+            path.append(self.__payload_path)
+            self.info = getattr(__import__(self.__payload_name, fromlist=['info']), 'info')
         except Exception as Error:
             return False
         else:
@@ -107,11 +132,16 @@ class ModuleObtainer(object):
         self.__path_payload = 'modules/payloads/' + self.__payload
 
         try:
-            self.options_payload = getattr(__import__(self.__path_payload.replace("/", "."), fromlist=['options_payload']), 'options_payload')
-            print(color.color("lgray", "Payload options (") + color.color("purple",self.__payload) + color.color("lgray", ")"))
+            self.options_payload = getattr(
+                __import__(self.__path_payload.replace("/", "."), fromlist=['options_payload']), 'options_payload')
+            print(
+                color.color("lgray", "Payload options (") + color.color("purple", self.__payload) + color.color("lgray",
+                                                                                                                ")"))
             print('')
 
-            self.__option_message_payload = [[color.color('yellow','Name'),color.color('yellow','Require'),color.color('yellow','Description'),color.color('yellow','Value')]]
+            self.__option_message_payload = [
+                [color.color('yellow', 'Name'), color.color('yellow', 'Require'), color.color('yellow', 'Description'),
+                 color.color('yellow', 'Value')]]
 
             for opt, val in self.options_payload.items():
                 self.__option_message_payload.append([opt, val[0], val[1], val[2]])
@@ -121,5 +151,6 @@ class ModuleObtainer(object):
 
         except Exception as Error:
             return False
+
 
 obtainer = ModuleObtainer()
