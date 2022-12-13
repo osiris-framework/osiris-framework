@@ -38,9 +38,26 @@ def module_completer():
     t = tabCompleter()
     t.createListCompleter(
         ["set", "exploit", "back", "check", "help", "info", 'banner', 'run', 'exec', 'clean', 'search', 'options',
-         'set rhost', 'set rport', 'set target', 'set proxy', 'set password_file', 'set username_file', 'set username',
-         'set password', 'sessions', 'set lhost', 'set lport', 'set payload generic/shell/bind_tcp', "set timeout", "set device_address", "set device", "set characteristic", "set data", "set characteristic_notify",
-         'set payload generic/shell/reverse_tcp'])
+         'set rhost', 'set rport', 'set target', 'set proxy', 'set password_file', 'set username_file', 'set username', "set platform",
+         'set password', 'sessions', 'set lhost', 'set lport', "set timeout", "set device_address", "set device", "set characteristic", "set data", "set characteristic_notify",
+         'set targeturi', 'set payload cmd/unix/reverse/bash_i', 'set payload cmd/unix/reverse/bash_196','set payload cmd/unix/reverse/bash_readline',
+         'set payload cmd/unix/reverse/bash_5', 'set payload cmd/unix/reverse/bash_udp', 'set payload cmd/unix/reverse/nc_mkfifo',
+         'set payload cmd/unix/reverse/nc_e', 'set payload cmd/unix/reverse/nc_c', 'set payload cmd/unix/reverse/ncat_e',
+         'set payload cmd/unix/reverse/ncat_udp', 'set payload cmd/unix/reverse/rustcat', 'set payload cmd/unix/reverse/perl',
+         'set payload cmd/unix/reverse/perl_nosh', 'set payload cmd/unix/reverse/php_exec', 'set payload cmd/unix/reverse/php_shell_exec',
+         'set payload cmd/unix/reverse/php_system', 'set payload cmd/unix/reverse/php_passthru', 'set payload cmd/unix/reverse/php_popen',
+         'set payload cmd/unix/reverse/php_proc_open', 'set payload cmd/unix/reverse/python_1', 'set payload cmd/unix/reverse/python_2',
+         'set payload cmd/unix/reverse/python_3_1', 'set payload cmd/unix/reverse/python_3_2', 'set payload cmd/unix/reverse/python3_shortest',
+         'set payload cmd/unix/reverse/ruby', 'set payload cmd/unix/reverse/ruby_nosh', 'set payload cmd/unix/reverse/socat',
+         'set payload cmd/unix/reverse/socat_tty', 'set payload cmd/unix/reverse/nodejs', 'set payload cmd/unix/reverse/telnet',
+         'set payload cmd/unix/reverse/zsh', 'set payload cmd/unix/reverse/lua', 'set payload cmd/unix/reverse/lua_2',
+         'set payload cmd/unix/reverse/golang', 'set payload cmd/unix/reverse/vlang', 'set payload cmd/unix/reverse/awk',
+         'set payload cmd/unix/bind/php_open', 'set payload cmd/unix/bind/python_3_2', 'set payload cmd/windows/reverse/nc_exe',
+         'set payload cmd/windows/reverse/groovy', 'set payload cmd/windows/reverse/ncat_exe', 'set payload cmd/windows/reverse/php_system',
+         'set payload cmd/windows/reverse/php_popen', 'set payload cmd/windows/bind/php_popen', 'set payload cmd/windows/reverse/php_proc_open',
+         'set payload cmd/windows/reverse/powershell', 'set payload cmd/windows/reverse/powershell_2', 'set payload cmd/windows/reverse/powershell_3',
+         'set payload cmd/windows/reverse/powershell_3_base64', 'set payload cmd/windows/reverse/powershell_4_tls', 'set payload cmd/windows/reverse/lua_2',
+         ])
     readline.set_completer_delims('\t')
     readline.parse_and_bind("tab: complete")
     readline.set_completer(t.listCompleter)

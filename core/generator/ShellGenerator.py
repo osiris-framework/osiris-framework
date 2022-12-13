@@ -10,8 +10,8 @@ from core.generator.Ofuscator import ofuscator
 class ShellGenerator:
     def __init__(self, **kwargs):
         self.__temp_message = None
-        self.__platform_allowed = ['linux', 'mac', 'windows']
-        self.__type_allowed = ['bind', 'reverse']
+        self.__platform_allowed = ['linux', 'mac', 'windows', 'microsoft windows', 'gnu/linux']
+        self.__type_allowed = ['bind', 'reverse', 'generic/shell/reverse_tcp']
         self.__status = {'message': '', 'code': 0}
         self.__payload = None
         self.__target = None
