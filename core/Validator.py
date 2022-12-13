@@ -5,7 +5,6 @@
 # Date: 14/11/2022
 
 
-from __main__ import *
 from utilities.Colors import color
 from utilities.ScreenCleaner import ScreenCleaner
 from core.Banner import banner
@@ -17,6 +16,7 @@ from core.generator.Help import help_generator
 from core.Interpreter import interpreter
 from utilities.Files import update_modules
 from core.Processor import processor
+from core.generator.Generator import generator_base
 
 
 class Validator(object):
@@ -26,6 +26,11 @@ class Validator(object):
 
     def __init__(self, command):
         self.__command = command
+        self.__target = None
+        self.__port = None
+        self.__type = None
+        self.__platform = None
+        self.__payload = None
 
     def validate_interpreter_mode(self):
         try:
@@ -41,8 +46,13 @@ class Validator(object):
                     pass
             elif self.__command[0].lower() == 'banner':
                 banner.banner_welcome()
-            elif self.__command[0].lower() == 'generator_list':
-                help_generator.help_generator()
+            elif self.__command[0].lower() == 'generator' and self.__command[1].lower() == 'list':
+                help_generator.show_payloads()
+            elif self.__command[0].lower() == 'generator' and self.__command[1].lower() == 'help':
+                help_generator.show_help_generator()
+            elif 'generator(' in self.__command[0].lower():
+                print(color.color("green", "Generator: ") + color.color("lgray",
+                                                                        generator_base.generator_base(self.__command)))
             elif self.__command[0].lower() == 'exit' or self.__command[0].lower() == 'close' or self.__command[
                 0].lower() == 'quit':
                 processor.kill_connections()
@@ -99,8 +109,6 @@ class Validator(object):
                 ScreenCleaner()
             elif self.__command[0].lower() == "banner":
                 banner.banner_welcome()
-            elif self.__command[0].lower() == 'generator_list':
-                help_generator.help_generator()
             elif self.__command[0].lower() == 'search':
                 try:
                     interpreter.search_module(query=self.__command[1])
@@ -109,8 +117,7 @@ class Validator(object):
                                                                   " Invalid syntax must enter the search query!"))
                 except TypeError:
                     pass
-            elif self.__command[0].lower() == 'exit' or self.__command[0].lower() == 'close' or self.__command[
-                0].lower() == "back":
+            elif self.__command[0].lower() == 'exit' or self.__command[0].lower() == 'close' or self.__command[0].lower() == "back":
                 import core.Interpreter
                 from core.Completer import completer  # import completer
                 reload(core.Interpreter)

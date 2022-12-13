@@ -351,6 +351,7 @@ class Tools(object):
                 yield load(fh)
         except Exception as Error:
             pass
+
     def generate_id(self, __uid_length, __session_name="thot-session-"):
         self.__status = {'message': '', 'code': 0}
         self.__generate_value = __session_name
@@ -364,7 +365,6 @@ class Tools(object):
             self.__status['message'] = self.__generate_value
 
         return self.__status
-
 
     def get_universal_platform(self):
         self.__known_os = ['linux', 'windows', 'osx', 'unknown platform']
@@ -399,15 +399,16 @@ class Tools(object):
         try:
             with urllib.request.urlopen(file_src_url) as response, open(file_dest, 'wb') as out_file:
                 shutil.copyfileobj(response, out_file)
-                #file_write = open(file_dest, 'w')
-                #file_write.write(response)
+                # file_write = open(file_dest, 'w')
+                # file_write.write(response)
 
-            self.__status['message'] = [ file_src_url, file_dest]
+            self.__status['message'] = [file_src_url, file_dest]
             self.__status['code'] = 200
         except Exception as Error:
             self.__status['message'] = str(Error)
             self.__status['code'] = 500
-            print( str(Error))
+            print(str(Error))
         return self.__status
+
 
 tools = Tools()

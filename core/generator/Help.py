@@ -10,9 +10,10 @@ from tabulate import tabulate
 
 class Help:
     def __init__(self):
+        self.__show_help_generator = None
         self.__show_generator = None
 
-    def help_generator(self):
+    def show_payloads(self):
         self.__show_generator = [[color.color('yellow', 'Payload'), color.color('yellow', 'Platform Support'),
                                   color.color('yellow', 'Type Connection'), color.color('yellow', 'Category')],
                                  [color.color("green", "bash_i"), color.color("lgray", "GNU/Linux & MacOSX"),
@@ -147,7 +148,30 @@ class Help:
                                  ]
         print('\n')
         print(color.color('yellow', '\t\t\t\t\tGENERATOR PAYLOADS'))
-        print(tabulate(self.__show_generator, headers='firstrow', tablefmt='simple', stralign='center'))
+        print(tabulate(self.__show_generator, headers='firstrow', tablefmt='simple', stralign='left'))
 
+    def show_help_generator(self):
+        self.__show_help_generator = [[color.color('yellow', 'FunctionName'), color.color('yellow', 'Command'), color.color("yellow", "Arguments"), color.color("yellow","Description")],
+                                      [color.color("green", "ShellGenerator"), color.color("lgray", "generator(ShellGenerator, ") + color.color("yellow", "target=,") + color.color("cyan"," port=, ") + color.color("red","platform=,") + color.color("purple"," type=, ") + color.color("blue","payload=") + color.color("lgray",")"), color.color("yellow", "target=ip address,") + color.color("cyan"," port=Connection port, ") + color.color("red","platform=operating system,") + color.color("purple"," type=type of connection, ") + color.color("blue","payload=programming language")
+, color.color("lgray","Generates payloads based on parameters passed under a selected language")],
+                                      [color.color("green", "TemplateGenerator"),
+                                       color.color("lgray", "generator(TemplateGenerator, ") + color.color("yellow",
+                                                                                                        "target=,") + color.color(
+                                           "cyan", " port=, ") + color.color("red", "platform=,") + color.color(
+                                           "purple", " type=, ") + color.color("blue", "payload=") + color.color(
+                                           "lgray", ")"),
+                                       color.color("yellow", "target=ip address,") + color.color("cyan",
+                                                                                                 " port=Connection port, ") + color.color(
+                                           "red", "platform=operating system,") + color.color("purple",
+                                                                                              " type=type of connection, ") + color.color(
+                                           "blue", "payload=programming language")
+                                          , color.color("lgray",
+                                                        "Generates payloads based on parameters passed under a selected language")]
+                                      ]
 
+        print('\n')
+        print(tabulate(self.__show_help_generator, headers='firstrow', tablefmt='simple', stralign='left'))
 help_generator = Help()
+
+
+

@@ -32,7 +32,7 @@ class Processor():
             self.__exploit_options = kwargs['exploit_options']
             self.__payload_select = self.__exploit_options['payload'][2]
 
-            if 'generic/shell/bind_tcp' in self.__payload_select:
+            if 'bind' in self.__payload_select:
                 self.__data_connection = str(
                     self.__payload_options["rhost"][2] + str(":") + self.__payload_options["rport"][2])
                 print_message.execution_info(
@@ -40,7 +40,7 @@ class Processor():
                 self.__connection = Thot(tuple(self.__data_connection.split(":")), self.__payload_select)
                 self.__connection.search_bind()
 
-            elif 'generic/shell/reverse_tcp' in self.__payload_select:
+            elif 'reverse' in self.__payload_select:
                 self.__data_connection = str(
                     self.__payload_options["lhost"][2] + str(":") + self.__payload_options["lport"][2])
                 if tools.get_port_use(self.__payload_options['lport'][2])['code'] != 200:
@@ -73,9 +73,9 @@ class Processor():
             print('\n')
             print(tabulate(self.___result_connection, headers='firstrow', tablefmt='simple', stralign='center'))
 
-    def get_console(self, __sesion, __path):
+    def get_console(self, __session, __path):
         try:
-            self.__connection.console(__sesion, __path)
+            self.__connection.console(__session, __path)
         except:
             print(color.color("red", "[-] ") + color.color("c", "Error there are no active connections to select"))
 

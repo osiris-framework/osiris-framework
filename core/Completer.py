@@ -36,13 +36,19 @@ def completer():
     t = tabCompleter()
     # tool command
     t.createListCompleter(
-        ["clean", "exit", "banner", "exec", "restart", "upgrade", 'search', 'help', "sessions", "select", "back", "generator_list",
-         "reload_modules",
+        ["clean", "exit", "banner", "exec", "restart", "upgrade", 'search', 'help', "sessions", "select", "back", "generator list", "generator help", "generator(ShellGenerator, target=, port=, platform=, type=, payload=)",
+         "reload_modules", "generator(TemplateGenerator, target=, port=, platform=, type=, payload=)",
          ### start
-                                            "use auxiliary/gather/oracle/weblogic/weblogic_detect",
+                                            "use auxiliary/gather/ble/characteristics",
+                            "use auxiliary/gather/ble/write",
+                            "use auxiliary/gather/ble/discover",
+                            "use auxiliary/gather/ble/write_notify",
+                            "use auxiliary/gather/ble/read",
+                            "use auxiliary/gather/oracle/weblogic/weblogic_detect",
                             "use auxiliary/gather/http/excalibur",
                             "use auxiliary/gather/http/netscaler_cookie_decrypt",
                             "use auxiliary/gather/http/method_enable",
+                            "use auxiliary/gather/http/horus",
                             "use auxiliary/gather/http/server_name",
                             "use auxiliary/gather/http/krakedin",
                             "use auxiliary/gather/http/http_security_headers_check",
@@ -57,7 +63,8 @@ def completer():
                             "use auxiliary/scanner/http/ssl_info",
                             "use auxiliary/scanner/smb/smb_version",
                             "use auxiliary/scanner/smb/smb_ms17_010",
-                            "use exploits/multi/handler"
+                            "use exploits/multi/handler",
+                            "use exploits/http/oracle/weblogic/weblogic_wsat_deserealization_rce"
                                         ### end
          ])
     readline.set_completer_delims('\t')
