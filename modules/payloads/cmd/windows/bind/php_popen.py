@@ -4,6 +4,16 @@
 # Version 1.0
 # Date: 28/11/2022
 
+info = {
+    'name': 'Windows Command Shell, Reverse TCP (via PHP)',
+    'description': 'Creates an interactive shell via php_popen',
+    'author': 'Samir Sanchez Garnica',
+    'License': 'GPL v3.0',
+    'platform': 'Windows',
+    'payload_type': 'cmd => [bind]',
+    'required': 'PHP'
+}
+
 
 options_payload = {
     'rhost': ['Yes', 'Set the target you are listening for', ''],

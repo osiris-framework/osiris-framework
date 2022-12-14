@@ -18,6 +18,9 @@ from utilities.Files import update_modules
 from core.Processor import processor
 from core.generator.Generator import generator_base
 
+__current_module = None
+__current_path_payload = None
+__current_payload = None
 
 class Validator(object):
     """
@@ -25,6 +28,9 @@ class Validator(object):
     """
 
     def __init__(self, command):
+        self.__path_payloads = None
+        self.__name_payload = None
+        self.__current_module = None
         self.__command = command
         self.__target = None
         self.__port = None
@@ -58,11 +64,13 @@ class Validator(object):
                 processor.kill_connections()
                 exit(0)
             elif self.__command[0].lower() == 'use':
+                global __current_module
                 from core.ModuleObtainer import obtainer
                 from core.ModuleInterpreter import ModuleInterpreter
 
                 try:
                     if obtainer.obtaining_info(self.__command[1]):
+                        __current_module = self.__command[1]
                         while True:
                             ModuleInterpreter("/".join(self.__command[1].split("/")[1:]),
                                               self.__command[1].split('/')[0], self.__command[1])
@@ -103,6 +111,9 @@ class Validator(object):
     def validate_module_interpreter_mode(self):
         from core.ModuleInterpreter import ModuleInterpreter
         from core.Interpreter import interpreter
+        global __current_module
+        global __current_path_payload
+        global __current_payload
 
         try:
             if self.__command[0].lower() == "clean":
@@ -135,13 +146,26 @@ class Validator(object):
                     pass
             elif self.__command[0].lower() == "show":
                 if 'payloads' in self.__command[1].lower():
-                    help.show_payloads_osiris()  # Show payloads
+                    if help.show_payloads_osiris():
+                        pass
+
+                    if obtainer.obtaining_info(__current_module):
+                        pass
+
+                    try:
+                        obtainer.options_payload = getattr(__import__(__current_path_payload.replace("/", "."), fromlist=['options_payload']),'options_payload')
+                    except Exception as Error:
+                        return False
+                    ModuleInterpreter.command_set_call(ModuleInterpreter, __current_payload[1],
+                                                       " ".join(__current_payload[2:]))
             elif self.__command[0].lower() == 'set':
                 try:
                     if 'payload' in self.__command[1] and '/' in self.__command[2]:
                         self.__name_payload = self.__command[2]
                         self.__path_payloads = 'modules/payloads/' + self.__command[2]
                         try:
+                            __current_path_payload = self.__path_payloads
+                            __current_payload = self.__command
                             obtainer.options_payload = getattr(
                                 __import__(self.__path_payloads.replace("/", "."), fromlist=['options_payload']),
                                 'options_payload')

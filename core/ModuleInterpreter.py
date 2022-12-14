@@ -37,7 +37,7 @@ def module_completer():
 
     t = tabCompleter()
     t.createListCompleter(
-        ["set", "exploit", "back", "check", "help", "info", 'banner', 'run', 'exec', 'clean', 'search', 'options',
+        ["set", "exploit", "back", "check", "help", "info", 'banner', 'run', 'exec', 'clean', 'search', 'options', "show payloads",
          'set rhost', 'set rport', 'set target', 'set proxy', 'set password_file', 'set username_file', 'set username', "set platform",
          'set password', 'sessions', 'set lhost', 'set lport', "set timeout", "set device_address", "set device", "set characteristic", "set data", "set characteristic_notify",
          'set targeturi', 'set payload cmd/unix/reverse/bash_i', 'set payload cmd/unix/reverse/bash_196','set payload cmd/unix/reverse/bash_readline',

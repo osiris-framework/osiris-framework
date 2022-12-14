@@ -4,6 +4,15 @@
 # Version 1.0
 # Date: 28/11/2022
 
+info = {
+    'name': 'Unix Command Shell, Reverse TCP (via Zsh)',
+    'description': 'Creates an interactive shell via zsh zmodLoad',
+    'author': 'Samir Sanchez Garnica',
+    'License': 'GPL v3.0',
+    'platform': 'Unix',
+    'payload_type': 'cmd => [reverse]',
+    'required': 'zsh'
+}
 
 options_payload = {
     'lhost': ['Yes', 'Set the target you want to connect to', ''],
