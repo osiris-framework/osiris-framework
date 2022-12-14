@@ -12,7 +12,7 @@ info = {
     'author': 'Luis Eduardo Jacome Valencia',
     'date': '2022/12/13',
     'rank': 'Excellent',
-    'path': 'auxiliary/gather/http/horus.py',
+    'path': 'auxiliary/gather/http/captcha_solver.py',
     'category': 'auxiliary',
     'license': 'GPL-2.0',
     'description': 'Solve weak captcha and send the response to an endpoint. This is a version 1 and does not have still all the cases.',
