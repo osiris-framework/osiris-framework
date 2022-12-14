@@ -20,3 +20,4 @@ aiohttp
 selenium
 bleak~=0.19.5
 beautifulsoup4~=4.11.1
+pytesseract
