@@ -82,7 +82,7 @@ def exploit():
         loop = asyncio.get_event_loop()
 
         # Auth in O365
-        access_token = loop.run_until_complete(authenticate_with_office365())
+        access_token = loop.run_until_complete(authenticate_with_office365(_email, _password))
 
         #  Search mails by O365 API
         loop.run_until_complete(search_emails(access_token, _keyword))
