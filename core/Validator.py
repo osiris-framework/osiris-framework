@@ -146,18 +146,27 @@ class Validator(object):
                     pass
             elif self.__command[0].lower() == "show":
                 if 'payloads' in self.__command[1].lower():
-                    if help.show_payloads_osiris():
+                    try:
+                        if help.show_payloads_osiris():
+                            pass
+                    except:
                         pass
 
-                    if obtainer.obtaining_info(__current_module):
+                    try:
+                        if obtainer.obtaining_info(__current_module):
+                            pass
+                    except:
                         pass
 
                     try:
                         obtainer.options_payload = getattr(__import__(__current_path_payload.replace("/", "."), fromlist=['options_payload']),'options_payload')
                     except Exception as Error:
                         return False
-                    ModuleInterpreter.command_set_call(ModuleInterpreter, __current_payload[1],
+                    try:
+                        ModuleInterpreter.command_set_call(ModuleInterpreter, __current_payload[1],
                                                        " ".join(__current_payload[2:]))
+                    except:
+                        pass
             elif self.__command[0].lower() == 'set':
                 try:
                     if 'payload' in self.__command[1] and '/' in self.__command[2]:

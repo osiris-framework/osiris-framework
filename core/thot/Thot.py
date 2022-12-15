@@ -3,7 +3,7 @@
 # Author: Samir Sanchez Garnica @sasaga92
 # Version 1.0
 # Date: 14/11/2022
-
+import json
 import sys
 import threading
 import socket
@@ -16,6 +16,7 @@ from core.thot.Help import help
 from utilities.ScreenCleaner import ScreenCleaner
 from tabulate import tabulate
 from os import system
+from core.anubis.Anubis import anubis
 from utilities.Tools import tools
 from utilities.Messages import print_message
 
@@ -28,6 +29,7 @@ _count_connections = 1
 
 class Thot:
     def __init__(self, __user_connection, __type_connection):
+        self.__data_response = None
         self.__remove_connection = None
         self.__new_session = None
         self.__threads_create_worker = None
@@ -348,7 +350,12 @@ class Thot:
                 _exit_flag = False
 
             try:
-                sys.stdout.write(color.color("lgray", self.__buffer.decode('utf-8')))
+                try:
+                    self.__data_response = self.__buffer.decode('utf-8')
+                    self.__data_response = json.loads(self.__data_response)
+                    anubis.processor(self.__data_response)
+                except json.decoder.JSONDecodeError:
+                    sys.stdout.write(color.color("lgray", self.__data_response))
             except KeyboardInterrupt:
                 print_message.execution_error("Target {} Lost".format(self.__id_connection_transfer))
 

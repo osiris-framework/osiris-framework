@@ -77,7 +77,7 @@ class Interpreter(object):
         if len(self.__search_module) == 1:
             self.__search_module.append([color.color('red', 'NO RESULTS'), color.color('red', 'NO RESULTS')])
 
-        print(tabulate(self.__search_module, headers='firstrow', tablefmt='grid', stralign='center'))
+        print(tabulate(self.__search_module, headers='firstrow', tablefmt='simple', stralign='left'))
         print('')
 
     def check_upgrade(self):
