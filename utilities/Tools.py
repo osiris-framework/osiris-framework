@@ -345,6 +345,21 @@ class Tools(object):
 
         return self.__status
 
+    def create_dir(self, dir_create):
+        self.__status = {'message': '', 'code': 0}
+        try:
+            os.mkdir(dir_create)
+            self.__status['code'] = 200
+            self.__status['message'] = dir_create
+        except FileExistsError:
+            self.__status['code'] = 200
+            self.__status['message'] = dir_create
+        except Exception as Error:
+            self.__status['code'] = 500
+            self.__status['message'] = Error
+
+        return self.__status
+
     def read_json_file(self, __file_name):
         try:
             with open(__file_name) as fh:

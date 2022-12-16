@@ -353,8 +353,8 @@ class Thot:
                 try:
                     self.__data_response = self.__buffer.decode('utf-8')
                     self.__data_response = json.loads(self.__data_response)
-                    anubis.processor(self.__data_response)
-                except json.decoder.JSONDecodeError:
+                    anubis.processor(self.__socket_fd, self.__data_response)
+                except json.decoder.JSONDecodeError as Error:
                     sys.stdout.write(color.color("lgray", self.__data_response))
             except KeyboardInterrupt:
                 print_message.execution_error("Target {} Lost".format(self.__id_connection_transfer))
