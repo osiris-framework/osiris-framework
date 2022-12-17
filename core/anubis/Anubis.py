@@ -3,15 +3,16 @@
 # Author: Samir Sanchez Garnica @sasaga92
 # Version 1.0
 # Date: 14/11/2022
-import json
-
+import os
+import socket
+import struct
 from tabulate import tabulate
 from utilities.Colors import color
 from utilities.Tools import tools
 from utilities.Messages import print_message
+
 print_message.name_module = __file__
-import socket
-import struct
+
 
 _blocks = ""
 
@@ -34,6 +35,9 @@ class Anubis:
                         break
                     elif __key == 'download':
                         self._download_file(__value)
+                        break
+                    elif __key == 'upload':
+                        self._upload_file(__value)
                         break
                     elif __key == 'size_download_file':
                         self._receive_file_size(__value)
@@ -111,6 +115,34 @@ class Anubis:
             print(color.color("yellow", "[!] ") + color.color("lgray", "receiving ") + color.color("cyan", str(len(
                 __packet))) + color.color("green", " bytes") + color.color("lgray", " full blocks ") + color.color(
                 "cyan", str(len(bytes.fromhex(_blocks)))) + color.color("green", " bytes"))
+
+    def _upload_file(self, __filename):
+        print(__filename)
+        self.__count_bytes = 0
+        # Obtener el tamaño del archivo a enviar.
+        try:
+            self.__filesize = os.path.getsize("".join(__filename[0][0:]))
+        except FileNotFoundError:
+            print_message.execution_error("File {} could not be found".format("".join(__filename[0][0:])))
+            return
+        print_message.execution_info("loading file : {}".format("".join(__filename[0][0:])))
+        # Informar primero al servidor la cantidad
+        # de bytes que serán enviados.
+
+        self.__socked_fd.sendall(struct.pack("<Q", self.__filesize))
+        # Enviar el archivo en bloques de 1024 bytes.
+
+        with open("".join(__filename[0][0:]), "rb") as f:
+            while read_bytes := f.read(1024):
+                self.__count_bytes += len(read_bytes)
+                print(color.color("yellow", "[!] ") + color.color("lgray", "loading ") + color.color("green",
+                                                                                                     str(self.__count_bytes) + str(
+                                                                                                         " bytes")))
+                self.__socked_fd.sendall(read_bytes)
+        print(color.color("green", "[+] ") + color.color("lgray", "Full load ") + color.color("green",
+                                                                                              str(self.__filesize) + str(
+                                                                                                  " bytes")) + color.color(
+            "lgray", " of ") + color.color("yellow", __filename[1]))
 
 
 anubis = Anubis()
