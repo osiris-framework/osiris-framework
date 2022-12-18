@@ -14,14 +14,12 @@ from utilities.Messages import print_message
 print_message.name_module = __file__
 
 
-_blocks = ""
-
-
 class Anubis:
     def __init__(self):
         self.__sysinfo_result = None
         self.__data = None
-        self.__anubis_command_permitted = ['download', 'upload', 'sysinfo', 'recv_download_file', 'size_download_file', 'error']
+        self.__anubis_command_permitted = ['download', 'upload', 'sysinfo', 'recv_download_file', 'size_download_file',
+                                           'error']
         self.__socked_fd = None
         self.__tmp_folder = tools.temp_dir()['message'] + "/osiris-download/"
 
@@ -80,6 +78,7 @@ class Anubis:
             self.__stream += self.__chunk
             self.__received_bytes += len(self.__chunk)
         self.__filesize = struct.unpack(self.__fmt, self.__stream)[0]
+
         return self.__filesize
 
     def _download_file(self, __filename):
@@ -92,29 +91,27 @@ class Anubis:
         self.__socked_fd.send("procedure_download ".encode() + __filename.encode())
 
     def _recv_download_file(self, __packet):
-        global _blocks
-        _blocks += __packet
+        self.__received_bytes = 0
+        with open(self.__tmp_file, "wb") as f:
+            # Recibir los datos del archivo en bloques de
+            # 1024 bytes hasta llegar a la cantidad de
+            # bytes total informada por el cliente.
+            while self.__received_bytes < self.__filesize:
+                chunk = self.__socked_fd.recv(8192)
+                print(color.color("yellow", "[!] ") + color.color("lgray", "receiving ") + color.color("cyan", str(
+                    self.__received_bytes)) + color.color("green", " bytes") + color.color("lgray",
+                                                                                           " blocksize ") + color.color(
+                    "cyan", str(len(chunk))) + color.color("green", " bytes"))
+                if chunk:
+                    f.write(chunk)
+                    self.__received_bytes += len(chunk)
 
-        if self.__filesize == len(bytes.fromhex(_blocks)):
-
-            print(color.color("yellow", "[!] ") + color.color("lgray", "receiving ") + color.color("cyan", str(len(
-                __packet))) + color.color("green", " bytes") + color.color("lgray", " full blocks ") + color.color(
-                "cyan", str(len(bytes.fromhex(_blocks)))) + color.color("green", " bytes"))
-
-            print(color.color("green", "[+] ") + color.color("yellow", "Name: ") + color.color("green",
-                                                                                               self.__file_name) + color.color(
-                "yellow", " filesize: ") + color.color("green", self.__filesize) + color.color("green",
-                                                                                               " bytes") + color.color(
-                "yellow", " path: ") + color.color("green", self.__tmp_file))
-
-            with open(self.__tmp_file, "wb") as f:
-                f.write(bytes.fromhex(_blocks))
-                f.close()
-            _blocks = ""
-        else:
-            print(color.color("yellow", "[!] ") + color.color("lgray", "receiving ") + color.color("cyan", str(len(
-                __packet))) + color.color("green", " bytes") + color.color("lgray", " full blocks ") + color.color(
-                "cyan", str(len(bytes.fromhex(_blocks)))) + color.color("green", " bytes"))
+            # f.close()
+        print(color.color("green", "[+] ") + color.color("yellow", "Name: ") + color.color("green",
+                                                                                           self.__file_name) + color.color(
+            "yellow", " filesize: ") + color.color("green", self.__filesize) + color.color("green",
+                                                                                           " bytes") + color.color(
+            "yellow", " path: ") + color.color("green", self.__tmp_file))
 
     def _upload_file(self, __filename):
         print(__filename)
@@ -133,11 +130,13 @@ class Anubis:
         # Enviar el archivo en bloques de 1024 bytes.
 
         with open("".join(__filename[0][0:]), "rb") as f:
-            while read_bytes := f.read(1024):
+            while read_bytes := f.read(8192):
                 self.__count_bytes += len(read_bytes)
-                print(color.color("yellow", "[!] ") + color.color("lgray", "loading ") + color.color("green",
-                                                                                                     str(self.__count_bytes) + str(
-                                                                                                         " bytes")))
+                print(color.color("yellow", "[!] ") + color.color("lgray", "Loading ") + color.color("cyan", str(
+                    self.__count_bytes)) + color.color("green", " bytes") + color.color("lgray",
+                                                                                        " blocksize ") + color.color(
+                    "cyan", str(len(read_bytes))) + color.color("green", " bytes"))
+
                 self.__socked_fd.sendall(read_bytes)
         print(color.color("green", "[+] ") + color.color("lgray", "Full load ") + color.color("green",
                                                                                               str(self.__filesize) + str(
