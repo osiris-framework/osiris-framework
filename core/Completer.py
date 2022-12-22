@@ -46,7 +46,9 @@ def completer():
                             "use auxiliary/gather/ble/read",
                             "use auxiliary/gather/oracle/weblogic/weblogic_detect",
                             "use auxiliary/gather/http/excalibur",
+                            "use auxiliary/gather/http/captcha_solver",
                             "use auxiliary/gather/http/netscaler_cookie_decrypt",
+                            "use auxiliary/gather/http/search_mails_365_api",
                             "use auxiliary/gather/http/method_enable",
                             "use auxiliary/gather/http/horus",
                             "use auxiliary/gather/http/server_name",
@@ -64,7 +66,8 @@ def completer():
                             "use auxiliary/scanner/smb/smb_version",
                             "use auxiliary/scanner/smb/smb_ms17_010",
                             "use exploits/multi/handler",
-                            "use exploits/http/oracle/weblogic/weblogic_wsat_deserealization_rce"
+                            "use exploits/http/oracle/weblogic/weblogic_wsat_deserealization_rce",
+                            "use exploits/http/oracle/weblogic/weblogic_async_deserealization_rce"
                                         ### end
          ])
     readline.set_completer_delims('\t')
