@@ -140,7 +140,7 @@ class UpdateModuleDB(object):
         self.__unfiltered_result = None
         self.__path_finish = None
 
-    def update_path_module(self, name_folder):
+    def update_path_module(self, name_folder, type):
         self.__path_finish = ""
         import utilities.Files
         reload(utilities.Files)
@@ -171,7 +171,7 @@ class UpdateModuleDB(object):
                         self.__path_first_index = self.__thePath[0]
                         self.__thePath.remove(self.__path_first_index)
                         self.__thePath = '/'.join(self.__thePath)
-                        self.__path_finish += "                            \"use " + self.__thePath + "\"" + ',' + '\n'
+                        self.__path_finish += "                            \""+type+" " + self.__thePath + "\"" + ',' + '\n'
                         print(color.color("yellow", "[!] Loading {} ".format(name_folder) + color.color("green",
                                                                                                         "{}".format(
                                                                                                             self.__thePath))))
@@ -179,13 +179,15 @@ class UpdateModuleDB(object):
             pass
         except ImportError:
             pass
+        if 'set' in type:
+            self.__path_finish = self.__path_finish[:-1].replace("set payloads/","set payload ")
         return self.__path_finish[:-1]
 
     def processor_update_module(self, path_file_config):
         self.__text = '\"'
-        self.__text += self.update_path_module('modules/auxiliary')
+        self.__text += self.update_path_module('modules/auxiliary', 'use')
         self.__text += '\n'
-        self.__text += self.update_path_module('modules/exploits')
+        self.__text += self.update_path_module('modules/exploits','use')
         self.__text = self.__text[1:-1]
 
         _new = '''### start
@@ -199,6 +201,26 @@ class UpdateModuleDB(object):
             patter = re.compile('### start.*?### end', re.I | re.S)
             self.__clean_text = patter.sub(_new, self.__data)
             _f.write(self.__clean_text)
+
+    def processor_update_payloads(self, path_file_config):
+        self.__text = '\"'
+        self.__text += self.update_path_module('modules/payloads', 'set')
+        self.__text += '\n'
+        self.__text = self.__text[1:-1]
+
+        _new = '''### start
+                ''' + self.__text + '''
+                                        ### end'''
+
+        with open(path_file_config, 'r+') as _f:
+            self.__data = _f.read()
+            _f.seek(0)
+            _f.truncate()
+            patter = re.compile('### start.*?### end', re.I | re.S)
+            self.__clean_text = patter.sub(_new, self.__data)
+            _f.write(self.__clean_text)
+
+
 
 
 files = Files()

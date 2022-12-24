@@ -102,6 +102,7 @@ class Validator(object):
                 processor.get_console(self.__command[0].lower() + str(" ") + str(self.__command[1]), "base")
             elif self.__command[0].lower() == 'reload_modules':
                 update_modules.processor_update_module('core/Completer.py')
+                update_modules.processor_update_payloads('core/ModuleInterpreter.py')
             else:
                 print(color.color("yellow", "[!]") + color.color("lgray", " Option not found :("))
 
