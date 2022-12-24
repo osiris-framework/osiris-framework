@@ -56,7 +56,8 @@ def module_completer():
          'set payload cmd/windows/reverse/groovy', 'set payload cmd/windows/reverse/ncat_exe', 'set payload cmd/windows/reverse/php_system',
          'set payload cmd/windows/reverse/php_popen', 'set payload cmd/windows/bind/php_popen', 'set payload cmd/windows/reverse/php_proc_open',
          'set payload cmd/windows/reverse/powershell', 'set payload cmd/windows/reverse/powershell_2', 'set payload cmd/windows/reverse/powershell_3',
-         'set payload cmd/windows/reverse/powershell_3_base64', 'set payload cmd/windows/reverse/powershell_4_tls', 'set payload cmd/windows/reverse/lua_2',
+         'set payload cmd/windows/reverse/powershell_3_base64', 'set payload cmd/windows/reverse/powershell_4_tls', 'set payload cmd/windows/reverse/lua_2', 'set payload cmd/webshell/php_generic',
+         'set payload cmd/webshell/connect',
          ])
     readline.set_completer_delims('\t')
     readline.parse_and_bind("tab: complete")

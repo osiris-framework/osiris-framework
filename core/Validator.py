@@ -17,6 +17,7 @@ from core.Interpreter import interpreter
 from utilities.Files import update_modules
 from core.Processor import processor
 from core.generator.Generator import generator_base
+from core.thot.ThotCompleter import thot_completer
 
 __current_module = None
 __current_path_payload = None
@@ -97,6 +98,7 @@ class Validator(object):
             elif self.__command[0].lower() == 'sessions':
                 processor.list_sessions()
             elif 'select' in self.__command[0].lower():
+                thot_completer()
                 processor.get_console(self.__command[0].lower() + str(" ") + str(self.__command[1]), "base")
             elif self.__command[0].lower() == 'reload_modules':
                 update_modules.processor_update_module('core/Completer.py')
@@ -246,7 +248,8 @@ class Validator(object):
             elif self.__command[0].lower() == 'sessions':
                 processor.list_sessions()
             elif 'select' in self.__command[0].lower():
-                processor.get_console(self.__command[0].lower() + str(" ") + str(self.__command[1]), "module")
+                thot_completer()
+                processor.get_console(self.__command[0] + str(" ") + str(self.__command[1]), "module")
             else:
                 print(color.color("red", "[!]") + color.color("lgray", " Option not found :("))
         except (KeyboardInterrupt, EOFError):

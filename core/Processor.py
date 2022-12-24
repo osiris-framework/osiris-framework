@@ -16,6 +16,7 @@ print_message.name_module = __file__
 
 class Processor():
     def __init__(self):
+        self.__consumer = None
         self.___result_connection = None
         self.__thread2 = None
         self.__thread = None
@@ -54,9 +55,25 @@ class Processor():
 
                     except Exception as Error:
                         print(Error)
+            elif 'webshell' in self.__payload_select:
+                try:
+                    try:
+                        self.__consumer = [self.__exploit_options['target'][2],
+                                           self.__payload_options['uri_webshell'][2],
+                                           self.__payload_options['username'][2], self.__payload_options['password'][2]]
+                    except KeyError:
+                        self.__consumer = [self.__payload_options['target'][2],
+                                           self.__payload_options['uri_webshell'][2],
+                                           self.__payload_options['username'][2], self.__payload_options['password'][2]]
+
+                    self.__connection = Thot(tuple(list(tools.filter_hostname(self.__consumer[0])['message'])), self.__payload_select, self.__consumer )
+                    self.__connection.add_webshell_connection()
+                except Exception as Error:
+                    print(Error)
             else:
                 pass
         except Exception as Error:
+            print("aqui")
             print(Error)
 
     def list_sessions(self):

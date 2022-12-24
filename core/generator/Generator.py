@@ -7,6 +7,7 @@
 from utilities.Colors import color
 from core.generator.ShellGenerator import ShellGenerator
 from core.generator.TemplateGenerator import TemplateGenerator
+from core.generator.WebShellGenerator import WebshellGenerator
 
 
 class GeneratorBase:
@@ -144,7 +145,7 @@ class Generator:
         self.__options_payload = None
         self.__key_error = None
 
-        self.__keys_permitted = ['lhost', 'lport', 'rhost', 'rport']
+        self.__keys_permitted = ['lhost', 'lport', 'rhost', 'rport', 'username', 'password', 'uri_webshell']
 
         self.__type_payload = {
             "cmd/unix/reverse/bash_i": "reverse",
@@ -262,7 +263,8 @@ class Generator:
                 "cmd/windows/reverse/powershell_3": ShellGenerator(**self.__parameters).powershell_3()['message'],
                 "cmd/windows/reverse/powershell_3_base64": ShellGenerator(**self.__parameters).powershell_3_base64()['message'],
                 "cmd/windows/reverse/powershell_4_tls": ShellGenerator(**self.__parameters).powershell_4_tls()['message'],
-                "cmd/windows/reverse/lua_2": ShellGenerator(**self.__parameters).lua_2()['message']
+                "cmd/windows/reverse/lua_2": ShellGenerator(**self.__parameters).lua_2()['message'],
+                "cmd/webshell/php_generic": WebshellGenerator(**self.__parameters).PHP()['message']
             }
 
             if self.__status['code'] == 200:
@@ -317,6 +319,7 @@ class Generator:
             self.__status['code'] = 200
 
         return self.__status
+
 
 
 generator_base = GeneratorBase()

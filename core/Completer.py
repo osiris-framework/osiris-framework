@@ -67,7 +67,8 @@ def completer():
                             "use auxiliary/scanner/smb/smb_ms17_010",
                             "use exploits/multi/handler",
                             "use exploits/http/oracle/weblogic/weblogic_wsat_deserealization_rce",
-                            "use exploits/http/oracle/weblogic/weblogic_async_deserealization_rce"
+                            "use exploits/http/oracle/weblogic/weblogic_async_deserealization_rce",
+                            "use exploits/http/uploadify/uploadify_arbitrary_upload"
                                         ### end
          ])
     readline.set_completer_delims('\t')

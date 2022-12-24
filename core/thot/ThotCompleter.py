@@ -26,7 +26,6 @@ def add_new_session(new_sessions):
             list_completer.append(session)
 
     __operation_list = list(set(list_completer_temp).difference(set(new_sessions_select)))
-
     # remove session
     if len(__operation_list) > 0:
         for remove_session in __operation_list:
@@ -44,6 +43,7 @@ def thot_completer():
     class tabCompleter(object):
 
         def __init__(self):
+            global list_completer
             self.listCompleter = None
             self.list_completer = list_completer
 
