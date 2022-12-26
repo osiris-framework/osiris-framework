@@ -304,6 +304,8 @@ class Generator:
             self.__temp_message += color.color("lgray", "Target ID is out of range")
         except ValueError:
             self.__temp_message += color.color("lgray", "Target ID is not an appropriate value ")
+        except KeyError:
+            self.__parameters['platform'] = self.__options_extra_info['targets'][0]
 
         if self.__flag_key:
             self.__temp_message += color.color("lgray", "the parameter ") + self.__key_error + color.color("lgray",

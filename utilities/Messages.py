@@ -69,7 +69,7 @@ class Messages(object):
             self.__target, self.__username, self.__password = message
             print(color.color("lgray", "[-] Testing on target: ") + color.color("cafe",
                                                                                 str(self.__target)) + " " + color.color(
-                "lgray", "credentials:") + " " + color.color("cafe",
+                "lgray", "credentials:") + " " + color.color("lgray",
                                                              str(self.__username)) + ":" + color.color(
                 "cyan", str(self.__password)) + color.color("red", " Incorrect Password"))
 
