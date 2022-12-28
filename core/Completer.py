@@ -68,7 +68,8 @@ def completer():
                             "use exploits/multi/handler",
                             "use exploits/http/oracle/weblogic/weblogic_wsat_deserealization_rce",
                             "use exploits/http/oracle/weblogic/weblogic_async_deserealization_rce",
-                            "use exploits/http/uploadify/uploadify_arbitrary_upload"
+                            "use exploits/http/uploadify/uploadify_arbitrary_upload",
+                            "use exploits/linux/misc/tplink/tl_wr840n/os_command_injection_cve_2022_25064"
                                         ### end
          ])
     readline.set_completer_delims('\t')

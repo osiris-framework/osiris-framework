@@ -99,6 +99,7 @@ class GeneratorBase:
 
                 self.__shell_template_table = {
                     'C': TemplateGenerator(**self.__parameters).C()['message'],
+                    'C_Mips': TemplateGenerator(**self.__parameters).C_Mips()['message'],
                     'Dart': TemplateGenerator(**self.__parameters).Dart()['message'],
                     'Python3_windows': TemplateGenerator(**self.__parameters).Python3_windows()['message'],
                     'Nodejs': TemplateGenerator(**self.__parameters).Nodejs()['message'],

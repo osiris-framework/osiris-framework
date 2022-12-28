@@ -90,6 +90,7 @@ def module_completer():
                             "set payload cmd/unix/reverse/python_3_2",
                             "set payload cmd/unix/bind/python_3_2",
                             "set payload cmd/unix/bind/php_open",
+                            "set payload cmd/generic/reverse_tcp",
                             "set payload cmd/windows/reverse/powershell_3_base64",
                             "set payload cmd/windows/reverse/nc_exe",
                             "set payload cmd/windows/reverse/powershell",
