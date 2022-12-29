@@ -37,10 +37,10 @@ def module_completer():
 
     t = tabCompleter()
     t.createListCompleter(
-        ["set", "exploit", "back", "check", "help", "info", 'banner', 'run', 'exec', 'clean', 'search', 'options', "show payloads",
-         'set rhost', 'set rport', 'set target', 'set proxy', 'set password_file', 'set username_file', 'set username', "set platform",
-         'set password', 'sessions', 'set lhost', 'set lport', "set timeout", "set device_address", "set device", "set characteristic", "set data", "set characteristic_notify",
-         'set uri_webshell', 'set targeturi',
+        ["set", "exploit", "back", "check", "help", "info", 'banner', 'run', 'exec', 'clean', 'search', 'options', "show payloads","set srvhost ", "set srvfile ",
+         'set rhost ', 'set rport ', 'set target ', 'set proxy ', 'set password_file ', 'set username_file ', 'set username ', "set platform ",
+         'set password ', 'sessions', 'set lhost ', 'set lport ', "set timeout ", "set device_address ", "set device ", "set characteristic ", "set data ", "set characteristic_notify ",
+         'set uri_webshell ', 'set targeturi ',
 
          ### start
                                             "set payload cmd/webshell/connect",
