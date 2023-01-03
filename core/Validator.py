@@ -6,6 +6,7 @@
 
 
 from utilities.Colors import color
+from utilities.Tools import tools
 from utilities.ScreenCleaner import ScreenCleaner
 from core.Banner import banner
 from importlib import reload
@@ -90,13 +91,16 @@ class Validator(object):
                     system(' '.join(self.__command))
                 except IndexError:
                     print(color.color("yellow", "[!]") + color.color("lgray", " Please enter a command!"))
-
             elif self.__command[0].lower() == 'upgrade':
                 interpreter.check_upgrade()
             elif self.__command[0].lower() == 'help':
                 help.help_osiris()
             elif self.__command[0].lower() == 'sessions':
                 processor.list_sessions()
+            elif self.__command[0].lower() == 'pattern_create':
+                print(tools.pattern_create(self.__command[1])['message'])
+            elif self.__command[0].lower() == 'pattern_find':
+                print(tools.pattern_find(self.__command[1])['message'])
             elif 'select' in self.__command[0].lower():
                 thot_completer()
                 processor.get_console(self.__command[0].lower() + str(" ") + str(self.__command[1]), "base")

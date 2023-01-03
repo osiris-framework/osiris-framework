@@ -42,7 +42,11 @@ class Help(object):
                                        [color.color('green', 'generator list'),
                                         'Displays the list of payloads available to generate from osiris'],
                                        [color.color('green', 'generator help'),
-                                        'Show help about payload generator class']
+                                        'Show help about payload generator class'],
+                                       [color.color('green', 'pattern_create'),
+                                        'Creates a single string that receives as parameter a string size'],
+                                       [color.color('green', 'pattern_find'),
+                                        'looks for a unique string receiving as parameter the string in hexadecimal format 0x or ascii Aa0']
                                        ]
         print('\n')
         print(color.color('yellow', '\t\t\t\t\tCORE COMMANDS'))

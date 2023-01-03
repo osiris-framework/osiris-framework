@@ -37,7 +37,7 @@ def completer():
     # tool command
     t.createListCompleter(
         ["clean", "exit", "banner", "exec", "restart", "upgrade", 'search', 'help', "sessions", "select", "back", "generator list", "generator help", "generator(ShellGenerator, target=, port=, platform=, type=, payload=)",
-         "reload_modules", "generator(TemplateGenerator, target=, port=, platform=, type=, payload=)",
+         "reload_modules", "generator(TemplateGenerator, target=, port=, platform=, type=, payload=)", "pattern_create ", "pattern_find ",
          ### start
                                             "use auxiliary/gather/ble/characteristics",
                             "use auxiliary/gather/ble/write",
