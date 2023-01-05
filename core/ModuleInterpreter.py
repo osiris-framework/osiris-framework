@@ -65,6 +65,7 @@ def module_completer():
                             "set payload cmd/unix/reverse/python3_1",
                             "set payload cmd/unix/reverse/socat_tty",
                             "set payload cmd/unix/reverse/rustcat",
+                            "set payload cmd/unix/reverse/nc_mkfifo_sh",
                             "set payload cmd/unix/reverse/ncat_e",
                             "set payload cmd/unix/reverse/python3_shortest",
                             "set payload cmd/unix/reverse/bash_udp",
