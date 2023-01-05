@@ -69,7 +69,9 @@ def completer():
                             "use exploits/http/oracle/weblogic/weblogic_wsat_deserealization_rce",
                             "use exploits/http/oracle/weblogic/weblogic_async_deserealization_rce",
                             "use exploits/http/uploadify/uploadify_arbitrary_upload",
+                            "use exploits/linux/misc/cdata/onu4ferw/os_command_injection_cve_2021_44132",
                             "use exploits/linux/misc/tplink/tl_wr840n/os_command_injection_cve_2022_25060",
+                            "use exploits/linux/misc/tplink/tl_wr840n/os_command_injection_cve_2023_XXXX",
                             "use exploits/linux/misc/tplink/tl_wr840n/os_command_injection_cve_2022_25064",
                             "use exploits/linux/misc/tplink/tl_wr840n/os_command_injection_cve_2022_25061"
                                         ### end

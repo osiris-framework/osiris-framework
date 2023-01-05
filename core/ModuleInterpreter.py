@@ -69,6 +69,7 @@ def module_completer():
                             "set payload cmd/unix/reverse/python3_shortest",
                             "set payload cmd/unix/reverse/bash_udp",
                             "set payload cmd/unix/reverse/bash_5",
+                            "set payload cmd/unix/reverse/nc_mknod_sh",
                             "set payload cmd/unix/reverse/php_proc_open",
                             "set payload cmd/windows/reverse/php_proc_open",
                             "set payload cmd/unix/reverse/nc_c",
