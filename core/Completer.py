@@ -75,7 +75,8 @@ def completer():
                             "use exploits/linux/misc/tplink/tl_wr840n/os_command_injection_cve_2022_25060",
                             "use exploits/linux/misc/tplink/tl_wr840n/os_command_injection_cve_2023_XXXX",
                             "use exploits/linux/misc/tplink/tl_wr840n/os_command_injection_cve_2022_25064",
-                            "use exploits/linux/misc/tplink/tl_wr840n/os_command_injection_cve_2022_25061"
+                            "use exploits/linux/misc/tplink/tl_wr840n/os_command_injection_cve_2022_25061",
+                            "use exploits/linux/http/f5_icontrol_rce"
                                         ### end
          ])
     readline.set_completer_delims('\t')
