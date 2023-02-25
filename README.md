@@ -31,12 +31,14 @@ If you do not have some libraries that the frameworks needs, you can run the fol
 pip3 install -r requirements.txt
 ```
 
+**Note:** you need python 3.x to run properly the framework.
+
 ## Usage
 
 To get a list of basic options and switches use:
 
 ```
-python osiris-framework.py
+python3 osiris-framework.py
 ```
 
 And after use the command `help`:
@@ -47,5 +49,11 @@ help
 
 ## Links
 - Homepage: https://osirisframework.com
-- Misc:   
+- Misc:
+- Wiki: 
+- 
+
+## Contributing
+
+## Disclaimer
 
