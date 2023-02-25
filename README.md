@@ -1,5 +1,5 @@
 # Osiris-Framework
-Osiris-Framewrok v1.337 is an open-source project designed to assist security researchers in penetration testing and vulnerability assessment exercises through unique features such as 0-days and helpers, custom-made modules, and the ability to provide valuable information about vulnerabilities in a specific target. Additionally, the framework can be executed in multi-platform systems which allows security researchers to perform audits from geographically widespread locations.
+Osiris-Framework v1.337 is an open-source project designed to assist security researchers in penetration testing and vulnerability assessment exercises through unique features such as 0-days and helpers, custom-made modules, and the ability to provide valuable information about vulnerabilities in a specific target. Additionally, the framework can be executed in multi-platform systems which allows security researchers to perform audits from geographically widespread locations.
 
 
 <img src="https://user-images.githubusercontent.com/119005933/221377006-e77044ab-5d12-4e6b-86cc-2ddc504ca121.png"  width=40% height=40% alt="Osiris-Framework">
@@ -11,7 +11,7 @@ Osiris-Framewrok v1.337 is an open-source project designed to assist security re
 ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
 ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
-[![BuyMeACoffee](https://img.shields.io/badge/Buy%20Us%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)]([https://www.buymeacoffee.com/tunombredeusuario](https://www.buymeacoffee.com/osirisframework))
+[![BuyMeACoffee](https://img.shields.io/badge/Buy%20Us%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)]([https://www.buymeacoffee.com/osirisframework])
 
 
 You can visit the collection of [screenshots](https://github.com/osiris-framework/osiris-framework-misc) demonstrating some of the features on the wiki.
