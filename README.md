@@ -57,13 +57,6 @@ And after use the command `help`:
 help
 ```
 
-## Some Features
-- Exclusive auxiliary modules (For example, BLE modules).
-- Written in python.
-- You can run in any Android device.
-- Thot as a listener.
-- Annubis as C2. 
-
 ## Future (TO-DO)
 - [ ] Web Interface (Still working on that - 50%)
 
