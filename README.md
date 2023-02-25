@@ -49,8 +49,12 @@ And after use the command `help`:
 help
 ```
 
-## Features
-- 
+## Some Features
+- Exclusive auxiliary modules (For example, BLE modules).
+- Written in python.
+- You can run in any Android device.
+- Thot as a listener.
+- Annubis as C2. 
 
 ## Future (TO-DO)
 - [ ] Web Interface (Still working on that - 50%)
@@ -58,7 +62,7 @@ help
 
 ## Links
 - Homepage: https://osirisframework.com
-- Misc:
+- Misc: https://github.com/osiris-framework/osiris-framework-misc
 - Wiki: 
 - 
 
@@ -66,8 +70,7 @@ help
 
 As an open-source project, Osiris-Framework is continuously evolving and improving, with contributions and feedback from a community of users and developers. We encourage anyone who is interested in using or contributing to the tool to do so, with the understanding that its intended purpose is for educational and learning purposes.
 
-
-
+ 
 ## Disclaimer
 
 This tool has been published with education purposes. We are not responsible for any misuse, unethical use or damage caused by Osiris-Framework. It is the responsibility of the user to use the tool ethically and in accordance with applicable laws and regulations.
