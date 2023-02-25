@@ -48,6 +48,13 @@ And after use the command `help`:
 help
 ```
 
+## Features
+- 
+
+## Future (TO-DO)
+- [ ] Web Interface (Still working on that - 50%)
+
+
 ## Links
 - Homepage: https://osirisframework.com
 - Misc:
