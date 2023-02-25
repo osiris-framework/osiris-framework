@@ -11,6 +11,7 @@ Osiris-Framewrok v1.337 is an open-source project designed to assist security re
 ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
 ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+[![BuyMeACoffee](https://img.shields.io/badge/Buy%20Us%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)]([https://www.buymeacoffee.com/tunombredeusuario](https://www.buymeacoffee.com/osirisframework))
 
 
 You can visit the collection of [screenshots](https://github.com/osiris-framework/osiris-framework-misc) demonstrating some of the features on the wiki.
