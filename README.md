@@ -55,5 +55,12 @@ help
 
 ## Contributing
 
+As an open-source project, Osiris-Framework is continuously evolving and improving, with contributions and feedback from a community of users and developers. We encourage anyone who is interested in using or contributing to the tool to do so, with the understanding that its intended purpose is for educational and learning purposes.
+
+
+
 ## Disclaimer
 
+This tool has been published with education purposes. We are not responsible for any misuse, unethical use or damage caused by Osiris-Framework. It is the responsibility of the user to use the tool ethically and in accordance with applicable laws and regulations.
+
+We firmly believe that by providing individuals with the knowledge and skills to identify and mitigate security risks, we can create a safer and more secure online environment for all users. Through our tool, we aim to empower people to learn about hacking and penetration testing in a responsible and ethical manner, with the ultimate goal of contributing to a more secure and resilient digital landscape.
