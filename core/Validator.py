@@ -6,6 +6,7 @@
 
 
 from utilities.Colors import color
+from utilities.Tools import tools
 from utilities.ScreenCleaner import ScreenCleaner
 from core.Banner import banner
 from importlib import reload
@@ -17,6 +18,7 @@ from core.Interpreter import interpreter
 from utilities.Files import update_modules
 from core.Processor import processor
 from core.generator.Generator import generator_base
+from core.thot.ThotCompleter import thot_completer
 
 __current_module = None
 __current_path_payload = None
@@ -89,17 +91,22 @@ class Validator(object):
                     system(' '.join(self.__command))
                 except IndexError:
                     print(color.color("yellow", "[!]") + color.color("lgray", " Please enter a command!"))
-
             elif self.__command[0].lower() == 'upgrade':
                 interpreter.check_upgrade()
             elif self.__command[0].lower() == 'help':
                 help.help_osiris()
             elif self.__command[0].lower() == 'sessions':
                 processor.list_sessions()
+            elif self.__command[0].lower() == 'pattern_create':
+                print(tools.pattern_create(self.__command[1])['message'])
+            elif self.__command[0].lower() == 'pattern_find':
+                print(tools.pattern_find(self.__command[1])['message'])
             elif 'select' in self.__command[0].lower():
+                thot_completer()
                 processor.get_console(self.__command[0].lower() + str(" ") + str(self.__command[1]), "base")
             elif self.__command[0].lower() == 'reload_modules':
                 update_modules.processor_update_module('core/Completer.py')
+                update_modules.processor_update_payloads('core/ModuleInterpreter.py')
             else:
                 print(color.color("yellow", "[!]") + color.color("lgray", " Option not found :("))
 
@@ -246,7 +253,8 @@ class Validator(object):
             elif self.__command[0].lower() == 'sessions':
                 processor.list_sessions()
             elif 'select' in self.__command[0].lower():
-                processor.get_console(self.__command[0].lower() + str(" ") + str(self.__command[1]), "module")
+                thot_completer()
+                processor.get_console(self.__command[0] + str(" ") + str(self.__command[1]), "module")
             else:
                 print(color.color("red", "[!]") + color.color("lgray", " Option not found :("))
         except (KeyboardInterrupt, EOFError):

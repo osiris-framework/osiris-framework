@@ -16,6 +16,7 @@ from datetime import datetime
 from tabulate import tabulate
 from platform import system
 from subprocess import STDOUT, check_output
+from string import ascii_uppercase, ascii_lowercase, digits
 from tempfile import gettempdir
 from json import load
 import secrets, string
@@ -23,6 +24,10 @@ import secrets, string
 
 class Tools(object):
     def __init__(self):
+        self.__haystack = None
+        self.__needle = None
+        self.__length = None
+        self.__pattern = None
         self.__letters = None
         self.__generate_value = None
         self.__temp_dir = None
@@ -115,6 +120,7 @@ class Tools(object):
             510: 'Not Extended',
             511: 'Network Authentication Required',
         }
+        self.__MAX_PATTERN_LENGTH = 20280
 
     def _isIPV4(self, IPV4):
         # Make a regular expression
@@ -423,6 +429,72 @@ class Tools(object):
             self.__status['message'] = str(Error)
             self.__status['code'] = 500
             print(str(Error))
+        return self.__status
+
+    def pattern_create(self, __length: int):
+        """
+                Generate a pattern of a given length up to a maximum
+                of 20280 - after this the pattern would repeat
+        """
+
+        self.__status = {'message': '', 'code': 0}
+        self.__pattern = ""
+
+        try:
+            self.__length = int(__length)
+        except ValueError as Error:
+            self.__status['code'] = 500
+            self.__status['message'] = Error.args[0]
+            return self.__status
+
+
+        if self.__length > self.__MAX_PATTERN_LENGTH:
+            self.__status['code'] = 500
+            self.__status['message'] = color.color("red", "[-] " ) + color.color("lgray","Pattern length exceeds maximum of {0} bytes ".format(color.color("yellow", self.__MAX_PATTERN_LENGTH)))
+            return self.__status
+
+        for upper in ascii_uppercase:
+            for lower in ascii_lowercase:
+                for digit in digits:
+                    if len(self.__pattern) < self.__length:
+                        self.__pattern += upper + lower + digit
+                    else:
+                        self.__status['code'] = 200
+                        self.__status['message'] = self.__pattern[:self.__length]
+                        return self.__status
+
+    def pattern_find(self, __search_pattern : str):
+        """
+            Search for search_pattern in pattern. Convert from hex if needed
+            Looking for needle in haystack
+        """
+
+        self.__needle = __search_pattern
+
+        try:
+            if self.__needle.startswith("0x"):
+                # Strip off '0x', convert to ASCII and reverse
+                self.__needle = self.__needle[2:]
+                self.__needle = bytearray.fromhex(self.__needle).decode("ascii")
+                self.__needle = self.__needle[::-1]
+        except (ValueError, TypeError) as Error:
+            self.__status['code'] = 500
+            self.__status['message'] = color.color("lgray","The value {} passed does not seem to correspond to a hexadecimal value.".format(color.color("red", self.__needle)))
+            return self.__status
+
+        self.__haystack = ""
+        for upper in ascii_uppercase:
+            for lower in ascii_lowercase:
+                for digit in digits:
+                    self.__haystack += upper + lower + digit
+                    found_at = self.__haystack.find(self.__needle)
+                    if found_at > -1:
+                        self.__status['code'] = 200
+                        self.__status['message'] = color.color("lgray", "Pattern found in position {}".format(color.color("green", found_at)))
+                        return self.__status
+
+        self.__status['code'] = 500
+        self.__status['message'] = color.color("lgray", "pattern {} not found".format(color.color("yellow", self.__needle)))
         return self.__status
 
 

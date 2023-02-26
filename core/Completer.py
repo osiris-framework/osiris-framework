@@ -37,7 +37,7 @@ def completer():
     # tool command
     t.createListCompleter(
         ["clean", "exit", "banner", "exec", "restart", "upgrade", 'search', 'help', "sessions", "select", "back", "generator list", "generator help", "generator(ShellGenerator, target=, port=, platform=, type=, payload=)",
-         "reload_modules", "generator(TemplateGenerator, target=, port=, platform=, type=, payload=)",
+         "reload_modules", "generator(TemplateGenerator, target=, port=, platform=, type=, payload=)", "pattern_create ", "pattern_find ",
          ### start
                                             "use auxiliary/gather/ble/characteristics",
                             "use auxiliary/gather/ble/write",
@@ -46,7 +46,9 @@ def completer():
                             "use auxiliary/gather/ble/read",
                             "use auxiliary/gather/oracle/weblogic/weblogic_detect",
                             "use auxiliary/gather/http/excalibur",
+                            "use auxiliary/gather/http/captcha_solver",
                             "use auxiliary/gather/http/netscaler_cookie_decrypt",
+                            "use auxiliary/gather/http/search_mails_365_api",
                             "use auxiliary/gather/http/method_enable",
                             "use auxiliary/gather/http/horus",
                             "use auxiliary/gather/http/server_name",
@@ -64,7 +66,17 @@ def completer():
                             "use auxiliary/scanner/smb/smb_version",
                             "use auxiliary/scanner/smb/smb_ms17_010",
                             "use exploits/multi/handler",
-                            "use exploits/http/oracle/weblogic/weblogic_wsat_deserealization_rce"
+                            "use exploits/http/oracle/weblogic/weblogic_wsat_deserealization_rce",
+                            "use exploits/http/oracle/weblogic/weblogic_async_deserealization_rce",
+                            "use exploits/http/uploadify/uploadify_arbitrary_upload",
+                            "use exploits/http/geoserver/jt-jiffle/os_command_injection_cve_2022_24816",
+                            "use exploits/linux/misc/cdata/onu4ferw/os_command_injection_cve_2022_29337",
+                            "use exploits/linux/misc/cdata/onu4ferw/os_command_injection_cve_2021_44132",
+                            "use exploits/linux/misc/tplink/tl_wr840n/os_command_injection_cve_2022_25060",
+                            "use exploits/linux/misc/tplink/tl_wr840n/os_command_injection_cve_2023_XXXX",
+                            "use exploits/linux/misc/tplink/tl_wr840n/os_command_injection_cve_2022_25064",
+                            "use exploits/linux/misc/tplink/tl_wr840n/os_command_injection_cve_2022_25061",
+                            "use exploits/linux/http/f5_icontrol_rce"
                                         ### end
          ])
     readline.set_completer_delims('\t')

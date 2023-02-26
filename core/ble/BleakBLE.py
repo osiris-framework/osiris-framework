@@ -28,6 +28,9 @@ class BleakBLE:
         self.__device_found = None
 
     async def scan_devices(self, timeout):
+        """
+            Description: Function in charge of performing a scan and discovery of nearby devices that are detectable through BLE, this function receives as parameter a timeout in seconds to perform the scan.
+        """
         try:
             for __device in await BleakScanner.discover(timeout=int(timeout)):
                 self.__devices[__device.address] = [str(__device.name), str(__device.rssi), str(__device.address)]

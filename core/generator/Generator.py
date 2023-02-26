@@ -7,6 +7,7 @@
 from utilities.Colors import color
 from core.generator.ShellGenerator import ShellGenerator
 from core.generator.TemplateGenerator import TemplateGenerator
+from core.generator.WebShellGenerator import WebshellGenerator
 
 
 class GeneratorBase:
@@ -98,6 +99,7 @@ class GeneratorBase:
 
                 self.__shell_template_table = {
                     'C': TemplateGenerator(**self.__parameters).C()['message'],
+                    'C_Mips': TemplateGenerator(**self.__parameters).C_Mips()['message'],
                     'Dart': TemplateGenerator(**self.__parameters).Dart()['message'],
                     'Python3_windows': TemplateGenerator(**self.__parameters).Python3_windows()['message'],
                     'Nodejs': TemplateGenerator(**self.__parameters).Nodejs()['message'],
@@ -144,7 +146,7 @@ class Generator:
         self.__options_payload = None
         self.__key_error = None
 
-        self.__keys_permitted = ['lhost', 'lport', 'rhost', 'rport']
+        self.__keys_permitted = ['lhost', 'lport', 'rhost', 'rport', 'username', 'password', 'uri_webshell']
 
         self.__type_payload = {
             "cmd/unix/reverse/bash_i": "reverse",
@@ -153,6 +155,8 @@ class Generator:
             "cmd/unix/reverse/bash_5": "reverse",
             "cmd/unix/reverse/bash_udp": "reverse",
             "cmd/unix/reverse/nc_mkfifo": "reverse",
+            "cmd/unix/reverse/nc_mkfifo_sh": "reverse",
+            "cmd/unix/reverse/nc_mknod_sh": "reverse",
             "cmd/unix/reverse/nc_e": "reverse",
             "cmd/unix/reverse/nc_c": "reverse",
             "cmd/unix/reverse/ncat_e": "reverse",
@@ -218,6 +222,8 @@ class Generator:
                 "cmd/unix/reverse/bash_5": ShellGenerator(**self.__parameters).bash_5()['message'],
                 "cmd/unix/reverse/bash_udp": ShellGenerator(**self.__parameters).bash_udp()['message'],
                 "cmd/unix/reverse/nc_mkfifo": ShellGenerator(**self.__parameters).nc_mkfifo()['message'],
+                "cmd/unix/reverse/nc_mkfifo_sh": ShellGenerator(**self.__parameters).nc_mkfifo_sh()['message'],
+                'cmd/unix/reverse/nc_mknod_sh': ShellGenerator(**self.__parameters).nc_mknod_sh()['message'],
                 "cmd/unix/reverse/nc_e": ShellGenerator(**self.__parameters).nc_e()['message'],
                 "cmd/unix/reverse/nc_c": ShellGenerator(**self.__parameters).nc_c()['message'],
                 "cmd/unix/reverse/ncat_e": ShellGenerator(**self.__parameters).nc_e()['message'],
@@ -262,7 +268,8 @@ class Generator:
                 "cmd/windows/reverse/powershell_3": ShellGenerator(**self.__parameters).powershell_3()['message'],
                 "cmd/windows/reverse/powershell_3_base64": ShellGenerator(**self.__parameters).powershell_3_base64()['message'],
                 "cmd/windows/reverse/powershell_4_tls": ShellGenerator(**self.__parameters).powershell_4_tls()['message'],
-                "cmd/windows/reverse/lua_2": ShellGenerator(**self.__parameters).lua_2()['message']
+                "cmd/windows/reverse/lua_2": ShellGenerator(**self.__parameters).lua_2()['message'],
+                "cmd/webshell/php_generic": WebshellGenerator(**self.__parameters).PHP()['message']
             }
 
             if self.__status['code'] == 200:
@@ -302,6 +309,8 @@ class Generator:
             self.__temp_message += color.color("lgray", "Target ID is out of range")
         except ValueError:
             self.__temp_message += color.color("lgray", "Target ID is not an appropriate value ")
+        except KeyError:
+            self.__parameters['platform'] = self.__options_extra_info['targets'][0]
 
         if self.__flag_key:
             self.__temp_message += color.color("lgray", "the parameter ") + self.__key_error + color.color("lgray",
@@ -317,6 +326,7 @@ class Generator:
             self.__status['code'] = 200
 
         return self.__status
+
 
 
 generator_base = GeneratorBase()

