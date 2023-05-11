@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
-# Project: osiris-framework
-# Author: Samir Sanchez Garnica @sasaga92
-# Version 1.0
-# Date: 14/11/2022
+# Project: Osiris-Framework
+# Version 1.337
 
 from utilities.Colors import color
 from utilities.Tools import tools
@@ -60,10 +58,9 @@ class WebshellGenerator:
                 self.__payload = f"""
                     <?php
                     /*
-                    # Project: osiris-framework
+                    # Project: Osiris-Framework
                     # Author: osiris-framework
-                    # Version 1.0
-                    # Date: 22/12/2022
+                    # Version 1.337
                      */
                      
                      class OsirisWebShell

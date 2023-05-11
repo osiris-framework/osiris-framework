@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-# Project: osiris-framework
+# Project: Osiris-Framework
 # Version 3.0
-# Date: 29/11/2022
 
 import os
 import json

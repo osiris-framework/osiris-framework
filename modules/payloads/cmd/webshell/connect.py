@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
-# Project: osiris-framework
-# Author: Samir Sanchez Garnica @sasaga92
-# Version 1.0
-# Date: 22/12/2022
+# Project: Osiris-Framework
+# Version 1.337
 
 info = {
     'name': 'Webshell Connect Generic Command',

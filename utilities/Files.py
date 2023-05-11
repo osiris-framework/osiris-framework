@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
-# Project: osiris-framework
-# Author: Samir Sanchez Garnica @sasaga92
-# Version 1.0
-# Date: 14/11/2022
+# Project: Osiris-Framework
+# Version 1.337
 import shutil
 from os import getcwd, walk, path, listdir, rename, remove, chdir
 from getpass import getuser

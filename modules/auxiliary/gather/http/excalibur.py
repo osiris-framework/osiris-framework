@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-# Project: osiris-framework
-# Version 2.0
-# Date: 27/01/2020
+# Project: Osiris-Framework
+# Version 1.337
 
 import os
 import string

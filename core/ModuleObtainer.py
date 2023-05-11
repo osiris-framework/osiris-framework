@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
-# Project: osiris-framework
-# Author: Samir Sanchez Garnica @sasaga92
-# Version 1.0
-# Date: 14/11/2022
+# Project: Osiris-Framework
+# Version 1.337
 
 from os import getcwd
 from sys import path
