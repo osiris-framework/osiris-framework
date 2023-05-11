@@ -65,7 +65,7 @@ help
 - Homepage: https://osirisframework.com
 - Misc: https://github.com/osiris-framework/osiris-framework-misc
 - Utilities: https://github.com/osiris-framework/osiris-framework-resource-modules
-- Wiki: https://app.gitbook.com/o/XJlp2VOufAAJTHfYM9zQ/home
+- Wiki: https://osiris-framework.gitbook.io/
 
 ## Contributing
 
